@@ -6,6 +6,7 @@ import 'O2_process_page.dart';
 import 'package:covital_dataset_builder/InitCamera.dart';
 import 'home.dart';
 import 'ground_truth_page.dart';
+import 'device_specs_page.dart';
 
 void main() => runApp(new MyApp());
 
@@ -20,6 +21,7 @@ class MyApp extends StatelessWidget {
             '/home': (context) => Home(),
             '/video': (context) => O2ProcessPage(),
             '/gtpage': (context) => GroundTruth(),
+            '/specs' : (context) => DeviceSpecsScreen(),
 //             When navigating to the "/second" route, build the SecondScreen widget.
 //            '/lifelapse_edit_page': (context) => TimeLapsePage(),
           },
@@ -58,7 +60,15 @@ class _LoadingScreenState extends State<LoadingScreen>{
   @protected
   Future runInitTasks() async {
     await UserDataContainer.of(context).data.initialize();
-    Navigator.of(context).pushReplacementNamed('/home');
+    print("init state done: " + UserDataContainer.of(context).data.user_data.commercial_device.toString());
+    if(UserDataContainer.of(context).data.user_data.commercial_device == null){
+      print("Going to specs");
+      Navigator.of(context).pushReplacementNamed('/specs');
+    }
+    else {
+      print("Going to home");
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
   }
 
 

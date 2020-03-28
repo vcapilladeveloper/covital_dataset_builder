@@ -36,10 +36,14 @@ dependencies:
   smart_signal_processing:
   flutter_ffmpeg:
   countdown:
+#  openapi:
+#    path: /home/malcolm/AndroidStudioProjects/dart_api_covital
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.2
+  aws_s3: ^0.1.1+hotfix.3
+  file_picker:
 
 dev_dependencies:
   flutter_test:

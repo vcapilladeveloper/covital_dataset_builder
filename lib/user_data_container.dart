@@ -12,13 +12,13 @@ class UserDataContainer extends StatefulWidget {
 
   final Widget child;
 
-  UserData user_settings;
+  UserData user_data;
 
   List<CameraDescription> cameras;
 
   String last_video;
 
-  UserDataContainer({Key key, this.child, this.user_settings, this.cameras, this.last_video
+  UserDataContainer({Key key, this.child, this.user_data, this.cameras, this.last_video
 //    @required this.userdata,
   }) {
 //    print("CREATED USERDATA CONTAINER");
@@ -55,7 +55,7 @@ class UserDataContainerState extends State<UserDataContainer> {
   List<CameraDescription> cameras;
 
 
-  UserData user_settings;
+  UserData user_data;
 
 
   bool is_init = false;
@@ -68,7 +68,7 @@ class UserDataContainerState extends State<UserDataContainer> {
     print("Init state container user data!");
     cameras = widget.cameras;
     last_video = widget.last_video;
-    user_settings = widget.user_settings;
+    user_data = widget.user_data;
   }
 
 
@@ -80,8 +80,12 @@ class UserDataContainerState extends State<UserDataContainer> {
 
 
   initialize() async {
-
+    print("init state");
     cameras = await availableCameras();
+    if(user_data == null){
+      user_data = UserData();
+      assert(user_data.commercial_device == null);
+    }
     is_init = true;
   }
 
