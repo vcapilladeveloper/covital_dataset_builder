@@ -131,6 +131,7 @@ class _HomeState extends State<Home>{
       onPressed: (){
         print("start to record");
         _loading_recording_process = true;
+        _time_left = Duration(seconds: 10);
         setState(() {
           controller.flash(true);
           init_process = true;

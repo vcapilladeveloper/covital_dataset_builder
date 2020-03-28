@@ -44,8 +44,8 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
         ),
         body: new Padding(
             padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            child: ListView(
+//              crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
                 Padding(
                     padding: EdgeInsets.all(10),
@@ -57,7 +57,7 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
                                 title: Text("Device brand"),
                               ),
                               TextField(
-                                keyboardType: TextInputType.number,
+//                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     prefixIcon: Icon(Icons.input),
@@ -85,7 +85,7 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
                                 title: Text("Device ref"),
                               ),
                               TextField(
-                                keyboardType: TextInputType.number,
+//                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
                                     prefixIcon: Icon(Icons.input),
