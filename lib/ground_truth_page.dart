@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/scheduler.dart';
 import 'dart:io';
@@ -7,6 +8,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:rflutter_alert/rflutter_alert.dart';
+
 import 'package:path/path.dart' as path_lib;
 import 'package:http/http.dart';
 import 'package:flutter/services.dart';
@@ -14,7 +17,6 @@ import 'package:flutter/services.dart';
 import 'package:openapi/api.dart';
 
 import 'package:flutter_uploader/flutter_uploader.dart';
-
 
 //import 'package:aws_s3/aws_s3.dart';
 //import 'package:file_picker/file_picker.dart' as fp;
@@ -32,24 +34,23 @@ class _GroundTruthState extends State<GroundTruth> {
   ChewieController _chewieController;
   Survey survey;
 
-  double o2_gt;
-  double hr_gt;
+//  double o2_gt;
+//  double hr_gt;
 
   bool init_app = false;
   bool playing = false;
 
   var api_instance = DefaultApi();
 
-
   //to ensure image is uploading from the native android
-  bool isFileUploading = false;
+//  bool isFileUploading = false;
 
-  String poolId;
-  String awsFolderPath;
-  String bucketName;
+//  String poolId;
+//  String awsFolderPath;
+//  String bucketName;
 
   //To hold image paths after uploading to s3 for adding to db
-  File selectedFile;
+//  File selectedFile;
 
   @override
   void initState() {
@@ -80,7 +81,6 @@ class _GroundTruthState extends State<GroundTruth> {
 
   @protected
   Future<void> runInitTasks() async {
-
 //    await readEnv();
 
     survey = ModalRoute.of(context).settings.arguments;
@@ -113,7 +113,7 @@ class _GroundTruthState extends State<GroundTruth> {
       body_widgets = Container();
     }
 
-    print("Video: " + survey.video_file.toString());
+//    print("Video: " + survey.video_file.toString());
 
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
@@ -123,127 +123,100 @@ class _GroundTruthState extends State<GroundTruth> {
         title: Text("CoVital - Data collection"),
       ),
       body: body_widgets,
-      floatingActionButton: init_app
-          ? FloatingActionButton(
-              onPressed: () {
-                if (o2_gt == null || hr_gt == null) {
-                  print("need gt data");
-                  Fluttertoast.showToast(
-                      msg:
-                          "please input data ground truth data for SpO2 and HR",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-                      backgroundColor: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (o2_gt > 100 || o2_gt < 0 || hr_gt < 0) {
-                  print("need gt data");
-                  Fluttertoast.showToast(
-                      msg:
-                          "please input valid data ground truth data for SpO2 and HR",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-                      backgroundColor: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else {
-                  send_data();
-                }
-              },
-              child: Icon(
-                Icons.send,
-              ),
-            )
-          : null,
+//      floatingActionButton: init_app
+//          ? FloatingActionButton(
+//              onPressed: onPressedSendButton,
+//              child: Icon(
+//                Icons.send,
+//              ),
+//            )
+//          : null,
     );
+  }
+
+  void onPressedSendButton(){
+    if (survey.o2_gt == null || survey.hr_gt == null) {
+      print("need gt data");
+      Fluttertoast.showToast(
+          msg:
+          "please input data ground truth data for SpO2 and HR",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+//                timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (survey.o2_gt > 100 ||
+        survey.o2_gt < 0 ||
+        survey.hr_gt < 0) {
+      print("need gt data");
+      Fluttertoast.showToast(
+          msg:
+          "please input valid data ground truth data for SpO2 and HR",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+//                timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+
+      Alert(
+        context: context,
+        type: AlertType.warning,
+        title: "Warning",
+        desc: "Posting the data is final.",
+        buttons: [
+          DialogButton(
+            color: Theme.of(context).hintColor,
+            child: Text(
+              "Send",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              await send_data();
+              Navigator.of(context).pushReplacementNamed("/home");
+            },
+            width: 120,
+          ),
+          DialogButton(
+            child: Text(
+              "Keep editing",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
+
+
+
+
+    }
   }
 
   Widget all() {
     return ListView(
       children: <Widget>[
+
+        deviceInfo(),
+
         Chewie(
           controller: _chewieController,
         ),
 
-        Padding(
-            padding: EdgeInsets.all(10),
-            child: Card(
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text("GT SpO2 = " + o2_gt.toString()),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.input),
-                            labelText: "SpO2 (%)"
-                            //                  labelText: 'Frequency of capture (s)'
-                            ),
-                        onChanged: (String s) {
-                          print("Submitted: " + s);
-                          setState(() {
-                            setState(() {
-                              o2_gt = double.parse(s);
-                            });
-                          });
-                        },
-                        onSubmitted: (String s) {
-                          print("Submitted: " + s);
-                          setState(() {
-                            setState(() {
-                              o2_gt = double.parse(s);
-                            });
-                          });
-                        },
-                      ),
-                    ],
-                  )),
-            )),
+        GTMeasurements(),
 
-        Padding(
-            padding: EdgeInsets.all(10),
-            child: Card(
-              child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        title: Text("GT HR = " + hr_gt.toString()),
-                      ),
-                      TextField(
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.input),
-                            labelText: "HR (bpm)"
-                            //                  labelText: 'Frequency of capture (s)'
-                            ),
-                        onChanged: (String s) {
-                          print("Submitted: " + s);
-                          setState(() {
-                            setState(() {
-                              hr_gt = double.parse(s);
-                            });
-                          });
-                        },
-                        onSubmitted: (String s) {
-                          print("Submitted: " + s);
-                          setState(() {
-                            setState(() {
-                              hr_gt = double.parse(s);
-                            });
-                          });
-                        },
-                      ),
-                    ],
-                  )),
-            )),
+        UserDataCard(),
+
+        init_app
+            ? FlatButton.icon(
+          icon: Icon(Icons.send, color: Theme.of(context).accentColor,),
+         label: Text("SEND", style: TextStyle(color: Theme.of(context).accentColor),),
+        onPressed: onPressedSendButton,
+      ) : Container(),
 
 //        _controller.value.initialized
 //              ? AspectRatio(
@@ -255,10 +228,194 @@ class _GroundTruthState extends State<GroundTruth> {
     );
   }
 
-  void send_data() async {
-    print("Data sent: "+ survey.video_file + " video" );
-//    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
+  Widget deviceInfo(){
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: <Widget>[
+        Text(survey.phone_brand),
+        Text(survey.phone_reference),
+//        Text(survey.deviceData['model'])
+      ],
+    );
+  }
 
+  Widget GTMeasurements() {
+    return Padding(
+        padding: EdgeInsets.all(10),
+        child: Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text("Ground truth measurements"),
+                  ),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "SpO2 (%)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.o2_gt = double.parse(s);
+                        });
+                      });
+                    },
+                    onSubmitted: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.o2_gt = double.parse(s);
+                        });
+                      });
+                    },
+                  ),
+                  Divider(),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "HR (bpm)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.hr_gt = double.parse(s);
+                        });
+                      });
+                    },
+                    onSubmitted: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.hr_gt = double.parse(s);
+                        });
+                      });
+                    },
+                  ),
+                ],
+              )),
+        ));
+  }
+
+  Widget UserDataCard() {
+    return Padding(
+        padding: EdgeInsets.all(10),
+        child: Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text("User Data"),
+                  ),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "Age (years)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.age = int.parse(s);
+                        });
+                      });
+                    },
+                    onSubmitted: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.age = int.parse(s);
+                        });
+                      });
+                    },
+                  ),
+                  Divider(),
+                  TextField(
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "Weight (kg)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.weight = double.parse(s);
+                        });
+                      });
+                    },
+                    onSubmitted: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          survey.weight = double.parse(s);
+                        });
+                      });
+                    },
+                  ),
+                  Divider(),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text("Sex"),
+                        sexDropDown(),
+                      ]),
+                  Divider(),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text("Ethnicity"),
+                        ethnicityDropDown(),
+                      ]),
+                ],
+              )),
+        ));
+  }
+
+  Widget sexDropDown() {
+    return DropdownButton<Sex>(
+        value: survey.sex,
+        onChanged: (Sex newValue) {
+          setState(() {
+            survey.sex = newValue;
+          });
+        },
+        items: Sex.values.map((Sex sex) {
+          return DropdownMenuItem<Sex>(value: sex, child: Text(sex.toString()));
+        }).toList());
+  }
+
+  Widget ethnicityDropDown() {
+    return DropdownButton<Ethnicity>(
+        value: survey.ethni,
+        onChanged: (Ethnicity newValue) {
+          setState(() {
+            survey.ethni = newValue;
+          });
+        },
+        items: Ethnicity.values.map((Ethnicity ethni) {
+          return DropdownMenuItem<Ethnicity>(value: ethni, child: Text(ethni.toString()));
+        }).toList());
+  }
+
+  void send_data() async {
+    print("Data sent: " + survey.video_file + " video");
+//    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
 
     var video_path = path_lib.dirname(survey.video_file);
     var video_name = path_lib.basenameWithoutExtension(survey.video_file);
@@ -268,7 +425,12 @@ class _GroundTruthState extends State<GroundTruth> {
     String folder = video_name;
     String video_path_in_s3 = path_lib.join(folder, video_name);
 
-    print("path " + video_path + " file " + video_path_in_s3 + " ext " + extension);
+    print("path " +
+        video_path +
+        " file " +
+        video_path_in_s3 +
+        " ext " +
+        extension);
 //    var path =
 //    print(video.path);
 
@@ -278,9 +440,10 @@ class _GroundTruthState extends State<GroundTruth> {
       fieldname: "file",
     );
 
-    Response response = await api_instance.getSignedUploadReqWithHttpInfo(video_path_in_s3, extension);
+    Response response = await api_instance.getSignedUploadReqWithHttpInfo(
+        video_path_in_s3, extension);
     print(response.body);
-    var  response_map = jsonDecode(response.body);
+    var response_map = jsonDecode(response.body);
     String http_signed_address = response_map['result']['signedRequest'];
 
     final uploader = FlutterUploader();
@@ -311,7 +474,6 @@ class _GroundTruthState extends State<GroundTruth> {
 //          ));
 //    });
 
-
 //    print("Map: " + response_map['result']['signedRequest'].toString());
 //
 //    final uploader = FlutterUploader();
@@ -324,9 +486,7 @@ class _GroundTruthState extends State<GroundTruth> {
 //        showNotification: true, // send local notification (android only) for upload status
 //        tag: "upload 1"); // unique tag for upload task
 
-
 //    uploadVideo();
-
   }
 
 //  Future uploadVideo({@required bool binary}) async {
@@ -374,7 +534,6 @@ class _GroundTruthState extends State<GroundTruth> {
 //  }
 //
 //
-
 
 //  Future<String> _uploadvideo(String fileName, int number,
 //      {String extension = 'jpg'}) async {
