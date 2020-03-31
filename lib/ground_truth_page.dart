@@ -282,10 +282,17 @@ class _GroundTruthState extends State<GroundTruth> {
     String http_signed_address = response_map['result']['signedRequest'];
 
     final uploader = FlutterUploader();
-    var taskId = await uploader.enqueue(
+//    var taskId = await uploader.enqueue(
+//      url: http_signed_address,
+////      data: {"name": "john"},
+//      files: [fileItem],
+//      method: UploadMethod.PUT,
+////      tag: tag,
+//      showNotification: true,
+//    );
+    var taskId = await uploader.enqueueBinary(
       url: http_signed_address,
-//      data: {"name": "john"},
-      files: [fileItem],
+      file: fileItem,
       method: UploadMethod.PUT,
 //      tag: tag,
       showNotification: true,
