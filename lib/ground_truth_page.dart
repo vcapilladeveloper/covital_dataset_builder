@@ -20,6 +20,8 @@ import 'package:flutter_uploader/flutter_uploader.dart';
 //import 'package:file_picker/file_picker.dart' as fp;
 import 'package:image_picker/image_picker.dart' as ip;
 
+import 'survey.dart';
+
 class GroundTruth extends StatefulWidget {
   @override
   _GroundTruthState createState() => new _GroundTruthState();
@@ -28,7 +30,7 @@ class GroundTruth extends StatefulWidget {
 class _GroundTruthState extends State<GroundTruth> {
   VideoPlayerController _controller;
   ChewieController _chewieController;
-  String video_file;
+  Survey survey;
 
   double o2_gt;
   double hr_gt;
@@ -81,9 +83,9 @@ class _GroundTruthState extends State<GroundTruth> {
 
 //    await readEnv();
 
-    video_file = ModalRoute.of(context).settings.arguments;
+    survey = ModalRoute.of(context).settings.arguments;
 
-    _controller = VideoPlayerController.file(File(video_file))
+    _controller = VideoPlayerController.file(File(survey.video_file))
       ..initialize().then((_) {
         // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {});
@@ -111,7 +113,7 @@ class _GroundTruthState extends State<GroundTruth> {
       body_widgets = Container();
     }
 
-    print("Video: " + video_file.toString());
+    print("Video: " + survey.video_file.toString());
 
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
@@ -254,14 +256,14 @@ class _GroundTruthState extends State<GroundTruth> {
   }
 
   void send_data() async {
-    print("Data sent: "+ video_file + " video" );
+    print("Data sent: "+ survey.video_file + " video" );
 //    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
 
 
-    var video_path = path_lib.dirname(video_file);
-    var video_name = path_lib.basenameWithoutExtension(video_file);
-    var video_name_extension = path_lib.basename(video_file);
-    var extension = path_lib.extension(video_file).split(".").last;
+    var video_path = path_lib.dirname(survey.video_file);
+    var video_name = path_lib.basenameWithoutExtension(survey.video_file);
+    var video_name_extension = path_lib.basename(survey.video_file);
+    var extension = path_lib.extension(survey.video_file).split(".").last;
 
     String folder = video_name;
     String video_path_in_s3 = path_lib.join(folder, video_name);

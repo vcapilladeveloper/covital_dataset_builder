@@ -16,9 +16,9 @@ class UserDataContainer extends StatefulWidget {
 
   List<CameraDescription> cameras;
 
-  String last_video;
+//  String last_video;
 
-  UserDataContainer({Key key, this.child, this.user_data, this.cameras, this.last_video
+  UserDataContainer({Key key, this.child, this.user_data, this.cameras
 //    @required this.userdata,
   }) {
 //    print("CREATED USERDATA CONTAINER");
@@ -67,7 +67,7 @@ class UserDataContainerState extends State<UserDataContainer> {
     super.initState();
     print("Init state container user data!");
     cameras = widget.cameras;
-    last_video = widget.last_video;
+//    last_video = widget.last_video;
     user_data = widget.user_data;
   }
 

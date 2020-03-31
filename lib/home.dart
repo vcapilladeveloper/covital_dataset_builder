@@ -12,18 +12,29 @@ import 'package:countdown/countdown.dart';
 
 import 'package:video_player/video_player.dart';
 
+import 'survey.dart';
+import 'package:sensors/sensors.dart';
+
 class Home extends StatefulWidget {
   @override
   _HomeState createState() => new _HomeState();
-
 }
 
+class _HomeState extends State<Home> {
+  Survey survey = Survey();
 
-class _HomeState extends State<Home>{
-
+//  List<double> _accelerometerValues;
+//  List<double> _userAccelerometerValues;
+//  List<double> _gyroscopeValues;
+  List<StreamSubscription<dynamic>> _streamSubscriptions =
+      <StreamSubscription<dynamic>>[];
 
   VoidCallback videoPlayerListener;
   VideoPlayerController videoController;
+
+
+
+  Timer _timer_stop_recording;
 
   String imagePath;
   CountDown _cd;
@@ -37,48 +48,41 @@ class _HomeState extends State<Home>{
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   bool init_process = false;
-  String videoPath;
+//  String videoPath;
 
   int time_recording_in_sec = 5;
+  int time_before_recording_in_sec = 5;
   bool _loading_recording_process = false;
-
 
   @override
   void initState() {
     super.initState();
 
-    SchedulerBinding.instance.addPostFrameCallback((_){
+    SchedulerBinding.instance.addPostFrameCallback((_) {
       runInitTasks();
     });
-
-
   }
 
   @protected
   Future runInitTasks() async {
     var cameras = UserDataContainer.of(context).data.cameras;
-
   }
 
-
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
 
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("CoVital - Data collection"),
-      ),
-      body: new Column(
-        children: <Widget>[
-
+        key: _scaffoldKey,
+        appBar: AppBar(
+          title: Text("CoVital - Data collection"),
+        ),
+        body: new Column(
+          children: <Widget>[
 //          ListTile(title: Text("Home"),
 //          subtitle: Text("Data collection")),
-
-
 
 //          Row(
 //            mainAxisAlignment: MainAxisAlignment.center,
@@ -88,109 +92,111 @@ class _HomeState extends State<Home>{
 //            ],
 //          ),
 
-          Expanded(
-            child: Container(
-              child: Padding(
-                padding: const EdgeInsets.all(1.0),
-                child: Center(
-                  child: _cameraPreviewWidget(),
+            Expanded(
+              child: Container(
+                child: Padding(
+                  padding: const EdgeInsets.all(1.0),
+                  child: Center(
+                    child: _cameraPreviewWidget(),
+                  ),
                 ),
-              ),
-              decoration: BoxDecoration(
-                color: Colors.black,
-                border: Border.all(
-                  color: controller != null && controller.value.isRecordingVideo
-                      ? Colors.redAccent
-                      : Colors.grey,
-                  width: 3.0,
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  border: Border.all(
+                    color:
+                        controller != null && controller.value.isRecordingVideo
+                            ? Colors.redAccent
+                            : Colors.grey,
+                    width: 3.0,
+                  ),
                 ),
               ),
             ),
-          ),
 
-          _cameraTogglesRowWidget(),
+            _cameraTogglesRowWidget(),
 
-          Row(
-            children: <Widget>[
-              record_button(),
-              init_process == false ? Container() : Text(_loading_recording_process ? "Get ready. Recording will start in " + _time_left.inSeconds.toString() + "s" : "Recording done in " + _time_left.inSeconds.toString() + "s")
-            ],
-          ),
-
-
-
-        ],
-      )
-    );
+            Row(
+              children: <Widget>[
+                record_button(),
+                init_process == false
+                    ? Container()
+                    : Text(_loading_recording_process
+                        ? "Get ready. Recording will start in " +
+                            _time_left.inSeconds.toString() +
+                            "s"
+                        : "Recording done in " +
+                            _time_left.inSeconds.toString() +
+                            "s")
+              ],
+            ),
+          ],
+        ));
   }
 
+  Widget record_button() {
+    return init_process == false
+        ? FlatButton(
+            child: Text("Start recording"),
+            onPressed: () {
+              print("start to record");
+              _loading_recording_process = true;
+              _time_left = Duration(seconds: time_before_recording_in_sec);
+              setState(() {
+                controller.flash(true);
+                init_process = true;
+              });
 
-  Widget record_button(){
-    return init_process == false ? FlatButton(
-      child: Text("Start recording"),
-      onPressed: (){
-        print("start to record");
-        _loading_recording_process = true;
-        _time_left = Duration(seconds: 10);
-        setState(() {
-          controller.flash(true);
-          init_process = true;
-        });
+              _cd = CountDown(Duration(seconds: time_before_recording_in_sec));
+              _sub_cd = _cd.stream.listen(null);
+              // start your countdown by registering a listener
+              _sub_cd.onData((Duration d) {
+                setState(() {
+                  _time_left = d;
+                });
+              });
 
-        _cd = CountDown(Duration(seconds : 10));
-        _sub_cd = _cd.stream.listen(null);
-        // start your countdown by registering a listener
-        _sub_cd.onData((Duration d) {
+              // when it finish the onDone cb is called
+              _sub_cd.onDone(() {
+                _loading_recording_process = false;
+                onStartVideoRecording();
 
-          setState(() {
-            _time_left = d;
-          });
+                _cd_recording =
+                    CountDown(Duration(seconds: time_recording_in_sec));
+                _sub_cd_recording = _cd_recording.stream.listen(null);
+                _sub_cd_recording.onData((Duration d) {
+                  setState(() {
+                    _time_left = d;
+                  });
+                });
 
-        });
+                _timer_stop_recording = Timer(Duration(seconds: time_recording_in_sec), () {
+                  print("Stopping the recording");
+                  onStopRecording();
+                });
+              });
+            },
+          )
+        : FlatButton(
+            child: Text("Cancel"),
+            onPressed: () {
+              print("stop to record");
+              setState(() {
+                _loading_recording_process = false;
+                controller.flash(false);
+                init_process = false;
+                _sub_cd?.cancel();
+                _timer_stop_recording?.cancel();
 
-        // when it finish the onDone cb is called
-        _sub_cd.onDone(() {
-          _loading_recording_process = false;
-          onVideoRecordButtonPressed();
-
-          _cd_recording = CountDown(Duration(seconds : time_recording_in_sec));
-          _sub_cd_recording = _cd_recording.stream.listen(null);
-          _sub_cd_recording.onData((Duration d) {
-            setState(() {
-              _time_left = d;
-            });
-          });
-
-          Timer(Duration(seconds: time_recording_in_sec), () {
-            print("Stopping the recording");
-            onStopButtonPressed();
-          });
-
-        });
-
-      },
-    ) : FlatButton(
-      child: Text("Cancel"),
-      onPressed: (){
-        print("stop to record");
-        setState(() {
-
-          _loading_recording_process = false;
-          controller.flash(false);
-          init_process = false;
-          _sub_cd?.cancel();
-
-          _sub_cd_recording?.cancel();
-          onStopButtonPressed(was_cancelled: true);
-        });
-      },
-    );
+                _sub_cd_recording?.cancel();
+                onStopRecording(was_cancelled: true);
+              });
+            },
+          );
   }
 
 //  void start_recording(){
 //    print("Start recording for 30 sec");
 //  }
-
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -225,7 +231,6 @@ class _HomeState extends State<Home>{
       );
     }
   }
-
 
   void onNewCameraSelected(CameraDescription cameraDescription) async {
     if (controller != null) {
@@ -269,11 +274,7 @@ class _HomeState extends State<Home>{
   Widget _cameraTogglesRowWidget() {
     final List<Widget> toggles = <Widget>[];
 
-
-    var cameras = UserDataContainer
-        .of(context)
-        .data
-        .cameras;
+    var cameras = UserDataContainer.of(context).data.cameras;
 
     if (cameras.isEmpty) {
       return const Text('No camera found');
@@ -311,8 +312,32 @@ class _HomeState extends State<Home>{
     throw ArgumentError('Unknown lens direction');
   }
 
+  void onStartVideoRecording() {
+    //Start recording sensor measurements.
+    _streamSubscriptions
+        .add(accelerometerEvents.listen((AccelerometerEvent event) {
+      setState(() {
+        survey.accelerometerValues.add(event.x);
+        survey.accelerometerValues.add(event.y);
+        survey.accelerometerValues.add(event.z);
+      });
+    }));
+    _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
+      setState(() {
+        survey.gyroscopeValues.add(event.x);
+        survey.gyroscopeValues.add(event.y);
+        survey.gyroscopeValues.add(event.z);
+      });
+    }));
+    _streamSubscriptions
+        .add(userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+      setState(() {
+        survey.userAccelerometerValues.add(event.x);
+        survey.userAccelerometerValues.add(event.y);
+        survey.userAccelerometerValues.add(event.z);
+      });
+    }));
 
-  void onVideoRecordButtonPressed() {
     startVideoRecording().then((String filePath) {
       if (mounted) setState(() {});
 //      if (filePath != null) showInSnackBar('Saving video to $filePath');
@@ -336,7 +361,7 @@ class _HomeState extends State<Home>{
     }
 
     try {
-      videoPath = filePath;
+      survey.video_file = filePath;
       controller.flash(true);
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
@@ -346,32 +371,32 @@ class _HomeState extends State<Home>{
     return filePath;
   }
 
-  void onStopButtonPressed({bool was_cancelled = false}) {
+  void onStopRecording({bool was_cancelled = false}) {
+    for (var stream in _streamSubscriptions) {
+      stream.cancel();
+    }
+    _streamSubscriptions.clear();
+
     stopVideoRecording().then((_) {
       if (mounted) setState(() {});
 //      showInSnackBar('Video recorded to: $videoPath');
 
-
-      UserDataContainer
-          .of(context)
-          .data
-          .last_video = videoPath;
+//      UserDataContainer.of(context).data.last_video = videoPath;
       print("Stopped");
 
       controller.flash(false);
       init_process = false;
       _sub_cd?.cancel();
 
-      if(was_cancelled == false){
-  Navigator.of(context).pushNamed(
-  '/gtpage',
-  arguments: videoPath,
-  );
-  }
-
-
+      if (was_cancelled == false) {
+        Navigator.of(context).pushNamed(
+          '/gtpage',
+          arguments: survey,
+        );
+      } else {
+        survey.clearSensorData();
+      }
     });
-
   }
 
   Future<void> stopVideoRecording() async {
@@ -389,12 +414,9 @@ class _HomeState extends State<Home>{
     await _startVideoPlayer();
   }
 
-
-
-
   Future<void> _startVideoPlayer() async {
     final VideoPlayerController vcontroller =
-    VideoPlayerController.file(File(videoPath));
+        VideoPlayerController.file(File(survey.video_file));
     videoPlayerListener = () {
       if (videoController != null && videoController.value.size != null) {
         // Refreshing the state to update video player with the correct ratio.
@@ -415,7 +437,5 @@ class _HomeState extends State<Home>{
     await vcontroller.play();
   }
 
-
   String timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
-
 }
