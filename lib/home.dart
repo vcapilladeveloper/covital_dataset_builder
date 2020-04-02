@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'DrawerOnly.dart';
 import 'package:flutter/material.dart';
 import 'InitCamera.dart';
 import 'package:camera/camera.dart';
@@ -130,7 +131,11 @@ class _HomeState extends State<Home> {
               ],
             ),
           ],
-        ));
+        ),
+
+    drawer: DrawerOnly(),
+
+    );
   }
 
   Widget record_button() {

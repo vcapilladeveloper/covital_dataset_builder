@@ -1,7 +1,7 @@
 //import 'package:covital_dataset_builder/user_data.dart';
 import 'package:flutter/material.dart';
 import 'user_data_container.dart';
-import 'survey.dart';
+import 'package:flutter/scheduler.dart';
 
 class DeviceSpecsScreen extends StatefulWidget {
   @override
@@ -12,23 +12,37 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
   String brand;
   String reference_number;
 
+//  TextEditingController _controller_brand = TextEditingController();
+//  TextEditingController _controller_reference = TextEditingController();
+
   @override
   void initState() {
     super.initState();
 
-//    SchedulerBinding.instance.addPostFrameCallback((_){
-//      runInitTasks();
-//    });
+    SchedulerBinding.instance.addPostFrameCallback((_){
+      runInitTasks();
+    });
   }
 
-//  @protected
-//  Future runInitTasks() async {
-////    await UserDataContainer.of(context).data.initialize();
-////    Navigator.of(context).pushReplacementNamed('/home');
-//  }
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the
+    // widget tree.
+//    _controller_brand.dispose();
+//    _controller_reference.dispose();
+    super.dispose();
+  }
+
+  @protected
+  Future runInitTasks() async {
+    var settings = UserDataContainer.of(context).data.commercial_device;
+    brand = settings.brand;
+    reference_number = settings.reference_number;
+  }
 
   @override
   Widget build(BuildContext context) {
+    var settings = UserDataContainer.of(context).data.commercial_device;
     final ThemeData theme = Theme.of(context);
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
@@ -57,7 +71,9 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
                               ListTile(
                                 title: Text("Device brand"),
                               ),
-                              TextField(
+                              TextFormField(
+//                                controller: _controller_brand,
+                                initialValue: settings.brand == null ? "" : settings.brand,
 //                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
@@ -85,7 +101,9 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
                               ListTile(
                                 title: Text("Device ref"),
                               ),
-                              TextField(
+                              TextFormField(
+//                                controller: _controller_reference,
+                                initialValue: settings.reference_number == null ? "" : settings.reference_number,
 //                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
@@ -116,15 +134,26 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
   }
 
   void save() {
-    UserDataContainer.of(context).data.commercial_device = CommercialDevice();
+//    UserDataContainer.of(context).data.commercial_device = CommercialDevice();
     var settings = UserDataContainer.of(context).data.commercial_device;
+
+    bool first_init = false;
+    if(settings.brand == null){
+      first_init = true;
+    }
 
     settings.brand = brand;
     settings.reference_number = reference_number;
 
     assert(UserDataContainer.of(context).data.commercial_device != null);
 
+    settings.save();
 
-    Navigator.of(context).pushReplacementNamed('/home');
+    if(first_init == true) {
+      Navigator.of(context).pushReplacementNamed('/home');
+    }
+    else{
+      Navigator.of(context).pushNamed('/home');
+    }
   }
 }

@@ -21,7 +21,7 @@ import 'package:flutter_uploader/flutter_uploader.dart';
 
 //import 'package:aws_s3/aws_s3.dart';
 //import 'package:file_picker/file_picker.dart' as fp;
-import 'package:image_picker/image_picker.dart' as ip;
+//import 'package:image_picker/image_picker.dart' as ip;
 
 import 'survey.dart';
 

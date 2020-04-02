@@ -49,13 +49,16 @@ dependencies:
   cupertino_icons: ^0.1.2
 #  aws_s3: ^0.1.1+hotfix.3
 #  file_picker:
-  image_picker:
+#  image_picker:
+  hive:
+  hive_flutter:
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner:
   json_serializable:
+  hive_generator:
 
 
 # For information on the generic Dart part of this file, see the

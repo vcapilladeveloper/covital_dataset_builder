@@ -6,18 +6,6 @@ part of 'survey.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-CommercialDevice _$CommercialDeviceFromJson(Map<String, dynamic> json) {
-  return CommercialDevice()
-    ..brand = json['brand'] as String
-    ..reference_number = json['reference_number'] as String;
-}
-
-Map<String, dynamic> _$CommercialDeviceToJson(CommercialDevice instance) =>
-    <String, dynamic>{
-      'brand': instance.brand,
-      'reference_number': instance.reference_number,
-    };
-
 SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
   return SurveyDataExport()
     ..id = json['id'] as String

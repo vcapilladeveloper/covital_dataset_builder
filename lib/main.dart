@@ -61,7 +61,7 @@ class _LoadingScreenState extends State<LoadingScreen>{
   Future runInitTasks() async {
     await UserDataContainer.of(context).data.initialize();
     print("init state done: " + UserDataContainer.of(context).data.commercial_device.toString());
-    if(UserDataContainer.of(context).data.commercial_device == null){
+    if(UserDataContainer.of(context).data.commercial_device.brand == null){
       print("Going to specs");
       Navigator.of(context).pushReplacementNamed('/specs');
     }

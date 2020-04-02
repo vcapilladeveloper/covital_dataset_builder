@@ -2,7 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
-import 'survey.dart';
+import 'commercial_device.dart';
+
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class UserDataContainer extends StatefulWidget {
 // Your apps state is managed by the container
@@ -56,6 +59,7 @@ class UserDataContainerState extends State<UserDataContainer> {
 
 
   CommercialDevice commercial_device;
+  Box commercial_device_hive;
 
 
   bool is_init = false;
@@ -80,8 +84,17 @@ class UserDataContainerState extends State<UserDataContainer> {
 
 
   initialize() async {
+    registerHiveCommercialDevice();
+
     print("init state");
     cameras = await availableCameras();
+    await Hive.initFlutter();
+    commercial_device_hive = await Hive.openBox('lifelapseparam');
+
+    if(commercial_device_hive.isEmpty){
+      commercial_device_hive.add(CommercialDevice());
+    }
+    commercial_device = commercial_device_hive.getAt(0);
 //    if(commercial_device == null){
 //      commercial_device = CommercialDevice();
 //      assert(commercial_device != null);
