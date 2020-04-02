@@ -8,13 +8,14 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'dart:convert';
 
+
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'package:path/path.dart' as path_lib;
 import 'package:http/http.dart';
 import 'package:flutter/services.dart';
 
-import 'package:openapi/api.dart';
+import 'package:openapi/api.dart' as upload_api;
 
 import 'package:flutter_uploader/flutter_uploader.dart';
 
@@ -23,6 +24,51 @@ import 'package:flutter_uploader/flutter_uploader.dart';
 import 'package:image_picker/image_picker.dart' as ip;
 
 import 'survey.dart';
+
+
+
+class FileToSend{
+  upload_api.SignedUploadFiles file= upload_api.SignedUploadFiles();
+  Map<String, dynamic> signed_url;
+
+  String file_name_with_extension;
+  String file_path;
+  bool is_video;
+
+  FileToSend({this.file_path, this.file_name_with_extension, this.is_video});
+
+ Future<void> send_data() async {
+
+   FileItem fileItem = FileItem(
+     filename: file_name_with_extension,
+     savedDir: file_path,
+     fieldname: "file",
+   );
+   print("Sending the data: " + fileItem.filename + " " + fileItem.savedDir + " " + fileItem.fieldname);
+   final uploader = FlutterUploader();
+   if(is_video) {
+     var taskId = await uploader.enqueueBinary(
+       url: signed_url['signedRequest'],
+       file: fileItem,
+       method: UploadMethod.PUT,
+//      tag: tag,
+       showNotification: true,
+     );
+   }
+   else{
+     var taskId = await uploader.enqueue(
+        url: signed_url['signedRequest'],
+//        data: {"name": "john"},
+        files: [fileItem],
+        method: UploadMethod.PUT,
+//        tag: tag,
+//        showNotification: true,
+      );
+   }
+
+ }
+
+}
 
 class GroundTruth extends StatefulWidget {
   @override
@@ -40,7 +86,7 @@ class _GroundTruthState extends State<GroundTruth> {
   bool init_app = false;
   bool playing = false;
 
-  var api_instance = DefaultApi();
+  var api_instance = upload_api.DefaultApi();
 
   //to ensure image is uploading from the native android
 //  bool isFileUploading = false;
@@ -176,7 +222,9 @@ class _GroundTruthState extends State<GroundTruth> {
             onPressed: () async {
               Navigator.pop(context);
               await send_data();
-              Navigator.of(context).pushReplacementNamed("/home");
+
+//              Navigator.of(context).pushReplacementNamed("/home");
+
             },
             width: 120,
           ),
@@ -417,77 +465,64 @@ class _GroundTruthState extends State<GroundTruth> {
     print("Data sent: " + survey.video_file + " video");
 //    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
 
+
+
+
     var video_path = path_lib.dirname(survey.video_file);
-    var video_name = path_lib.basenameWithoutExtension(survey.video_file);
+//    var video_name = path_lib.basenameWithoutExtension(survey.video_file);
     var video_name_extension = path_lib.basename(survey.video_file);
     var extension = path_lib.extension(survey.video_file).split(".").last;
 
-    String folder = video_name;
-    String video_path_in_s3 = path_lib.join(folder, video_name);
+//    String folder = video_name;
+//    String video_path_in_s3 = path_lib.join(folder, video_name);
 
-    print("path " +
-        video_path +
-        " file " +
-        video_path_in_s3 +
-        " ext " +
-        extension);
-//    var path =
-//    print(video.path);
+    upload_api.InlineObject inline_object = upload_api.InlineObject();
+    List<FileToSend> files_to_send = List<FileToSend>();
 
-    var fileItem = FileItem(
-      filename: video_name_extension,
-      savedDir: video_path,
-      fieldname: "file",
-    );
+    FileToSend f_video = FileToSend(file_name_with_extension: video_name_extension, file_path: video_path, is_video: true);
+    f_video.file.name = "video";
+    f_video.file.extension_ = extension;
 
-    Response response = await api_instance.getSignedUploadReqWithHttpInfo(
-        video_path_in_s3, extension);
+    inline_object.files.add(f_video.file);
+    files_to_send.add(f_video);
+
+    //Write user data to file
+    await survey.writeUserData();
+
+    FileToSend f_user = FileToSend(file_name_with_extension: path_lib.basename(survey.user_file.path), file_path: survey.user_file_path, is_video: false);
+    f_user.file.name = "user";
+    f_user.file.extension_ = "txt";
+    inline_object.files.add(f_user.file);
+    files_to_send.add(f_user);
+
+
+    Response response = await api_instance.batchSignedUploadReqWithHttpInfo(inline_object);
     print(response.body);
     var response_map = jsonDecode(response.body);
-    String http_signed_address = response_map['result']['signedRequest'];
+    survey.id = response_map['surveyId'];
 
-    final uploader = FlutterUploader();
-//    var taskId = await uploader.enqueue(
-//      url: http_signed_address,
-////      data: {"name": "john"},
-//      files: [fileItem],
-//      method: UploadMethod.PUT,
-////      tag: tag,
-//      showNotification: true,
-//    );
-    var taskId = await uploader.enqueueBinary(
-      url: http_signed_address,
-      file: fileItem,
-      method: UploadMethod.PUT,
-//      tag: tag,
-      showNotification: true,
-    );
-//
-//    setState(() {
-//      _tasks.putIfAbsent(
-//          tag,
-//              () => UploadItem(
-//            id: taskId,
-//            tag: tag,
-//            type: MediaType.Video,
-//            status: UploadTaskStatus.enqueued,
-//          ));
-//    });
 
-//    print("Map: " + response_map['result']['signedRequest'].toString());
-//
-//    final uploader = FlutterUploader();
-//    final taskId = await uploader.enqueue(
-//        url: http_signed_address, //required: url to upload to
-//        files: [FileItem(filename: "test_video.mp4", savedDir: video_file, fieldname:"file")], // required: list of files that you want to upload
-//        method: UploadMethod.PUT, // HTTP method  (POST or PUT or PATCH)
-////        headers: {"apikey": "api_123456", "userkey": "userkey_123456"},
-//        data: {"name": "john"}, // any data you want to send in upload request
-//        showNotification: true, // send local notification (android only) for upload status
-//        tag: "upload 1"); // unique tag for upload task
+    for(var el in response_map['signedRequests']){
+      for(var el_file in files_to_send){
+        if(el_file.file.name == el['name']){
+          el_file.signed_url = el;
+          print("file name " + el_file.file.name);
+          print(el_file.signed_url['signedRequest']);
+        }
+      }
+    }
 
-//    uploadVideo();
+    for (var file in files_to_send){
+      print("Sending file");
+      await file.send_data();
+    }
+
   }
+
+
+
+
+
 
 //  Future uploadVideo({@required bool binary}) async {
 //    var video = await ImagePicker.pickVideo(source: ImageSource.gallery);
