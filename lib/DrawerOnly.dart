@@ -31,16 +31,24 @@ class _DrawerOnlyState extends State<DrawerOnly>
   Widget build(BuildContext context) {
 
     return new Drawer(
-        child: new Column(
+        child: new ListView(
             children: <Widget>[
-              UserAccountsDrawerHeader(
-//            child:
-                currentAccountPicture: null,
-                accountName: Text("CoVital"),
-                accountEmail: null,
 
-
+              DrawerHeader(
+                decoration: BoxDecoration(
+                    color: Theme.of(context).accentColor
+                ),
+                child: Image.asset("assets/logo.png", fit: BoxFit.fill,),
               ),
+//              UserAccountsDrawerHeader(
+////            child:
+//
+//                currentAccountPicture: Image.asset("assets/logo.png", fit: BoxFit.contain,),
+//                accountName: Text("CoVital"),
+//                accountEmail: null,
+//
+//
+//              ),
 
               ListTile(
                 leading: Icon(Icons.settings),

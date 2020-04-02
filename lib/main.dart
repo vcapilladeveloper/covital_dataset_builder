@@ -77,11 +77,11 @@ class _LoadingScreenState extends State<LoadingScreen>{
   Widget build(BuildContext context){
     final ThemeData theme = Theme.of(context);
 //    var bright = theme.brightness;
-    String icon = 'assets/images/logo_dark.png';
+//    String icon = 'assets/images/logo_dark.png';
 
     return Scaffold(
       body: new Center(
-        child: new Icon(Icons.file_download),
+        child: Image.asset("assets/logo.png", fit: BoxFit.fill,),
       ),
     );
   }
