@@ -8,7 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 import 'dart:convert';
 
-
+import 'user_data_container.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 
 import 'package:path/path.dart' as path_lib;
@@ -25,10 +25,10 @@ import 'package:image_picker/image_picker.dart' as ip;
 
 import 'survey.dart';
 
+enum MediaType { Image, Video }
 
-
-class FileToSend{
-  upload_api.SignedUploadFiles file= upload_api.SignedUploadFiles();
+class FileToSend {
+  upload_api.SignedUploadFiles file = upload_api.SignedUploadFiles();
   Map<String, dynamic> signed_url;
 
   String file_name_with_extension;
@@ -37,37 +37,38 @@ class FileToSend{
 
   FileToSend({this.file_path, this.file_name_with_extension, this.is_video});
 
- Future<void> send_data() async {
-
-   FileItem fileItem = FileItem(
-     filename: file_name_with_extension,
-     savedDir: file_path,
-     fieldname: "file",
-   );
-   print("Sending the data: " + fileItem.filename + " " + fileItem.savedDir + " " + fileItem.fieldname);
-   final uploader = FlutterUploader();
-   if(is_video) {
-     var taskId = await uploader.enqueueBinary(
-       url: signed_url['signedRequest'],
-       file: fileItem,
-       method: UploadMethod.PUT,
-//      tag: tag,
-       showNotification: true,
-     );
-   }
-   else{
-     var taskId = await uploader.enqueue(
+  Future<String> send_data(FlutterUploader uploader) async {
+    FileItem fileItem = FileItem(
+      filename: file_name_with_extension,
+      savedDir: file_path,
+      fieldname: "file",
+    );
+    print("Sending the data: " +
+        fileItem.filename +
+        " " +
+        fileItem.savedDir +
+        " " +
+        fileItem.fieldname);
+//    final uploader = FlutterUploader();
+    if (is_video) {
+      return await uploader.enqueueBinary(
+        url: signed_url['signedRequest'],
+        file: fileItem,
+        method: UploadMethod.PUT,
+      tag: "video",
+        showNotification: true,
+      );
+    } else {
+      return await uploader.enqueue(
         url: signed_url['signedRequest'],
 //        data: {"name": "john"},
         files: [fileItem],
         method: UploadMethod.PUT,
-//        tag: tag,
+        tag: "userfile",
 //        showNotification: true,
       );
-   }
-
- }
-
+    }
+  }
 }
 
 class GroundTruth extends StatefulWidget {
@@ -85,8 +86,6 @@ class _GroundTruthState extends State<GroundTruth> {
 
   bool init_app = false;
   bool playing = false;
-
-  var api_instance = upload_api.DefaultApi();
 
   //to ensure image is uploading from the native android
 //  bool isFileUploading = false;
@@ -130,6 +129,11 @@ class _GroundTruthState extends State<GroundTruth> {
 //    await readEnv();
 
     survey = ModalRoute.of(context).settings.arguments;
+
+    survey.commercialDevice = UserDataContainer.of(context).data.commercial_device;
+
+    assert(UserDataContainer.of(context).data.commercial_device != null);
+    assert(survey.commercialDevice != null);
 
     _controller = VideoPlayerController.file(File(survey.video_file))
       ..initialize().then((_) {
@@ -180,76 +184,12 @@ class _GroundTruthState extends State<GroundTruth> {
     );
   }
 
-  void onPressedSendButton(){
-    if (survey.o2_gt == null || survey.hr_gt == null) {
-      print("need gt data");
-      Fluttertoast.showToast(
-          msg:
-          "please input data ground truth data for SpO2 and HR",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-          backgroundColor: Theme.of(context).accentColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else if (survey.o2_gt > 100 ||
-        survey.o2_gt < 0 ||
-        survey.hr_gt < 0) {
-      print("need gt data");
-      Fluttertoast.showToast(
-          msg:
-          "please input valid data ground truth data for SpO2 and HR",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-          backgroundColor: Theme.of(context).accentColor,
-          textColor: Colors.white,
-          fontSize: 16.0);
-    } else {
-
-      Alert(
-        context: context,
-        type: AlertType.warning,
-        title: "Warning",
-        desc: "Posting the data is final.",
-        buttons: [
-          DialogButton(
-            color: Theme.of(context).hintColor,
-            child: Text(
-              "Send",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () async {
-              Navigator.pop(context);
-              await send_data();
-
-//              Navigator.of(context).pushReplacementNamed("/home");
-
-            },
-            width: 120,
-          ),
-          DialogButton(
-            child: Text(
-              "Keep editing",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () => Navigator.pop(context),
-            width: 120,
-          )
-        ],
-      ).show();
-
-
-
-
-    }
-  }
-
   Widget all() {
     return ListView(
       children: <Widget>[
-
         deviceInfo(),
+
+        spo2DeviceInfo(),
 
         Chewie(
           controller: _chewieController,
@@ -260,11 +200,10 @@ class _GroundTruthState extends State<GroundTruth> {
         UserDataCard(),
 
         init_app
-            ? FlatButton.icon(
-          icon: Icon(Icons.send, color: Theme.of(context).accentColor,),
-         label: Text("SEND", style: TextStyle(color: Theme.of(context).accentColor),),
-        onPressed: onPressedSendButton,
-      ) : Container(),
+            ? UploadButton(
+                survey: survey,
+              )
+            : Container(),
 
 //        _controller.value.initialized
 //              ? AspectRatio(
@@ -276,13 +215,22 @@ class _GroundTruthState extends State<GroundTruth> {
     );
   }
 
-  Widget deviceInfo(){
+  Widget deviceInfo() {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Text(survey.phone_brand),
-        Text(survey.phone_reference),
+        Text("Phone: " + survey.phone_brand + " " + survey.phone_reference),
+//        Text(survey.phone_reference),
 //        Text(survey.deviceData['model'])
+      ],
+    );
+  }
+
+  Widget spo2DeviceInfo() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: <Widget>[
+        Text("Spo2 device: " + survey.commercialDevice.reference_number.toString() + " " + survey.commercialDevice.brand.toString()),
       ],
     );
   }
@@ -450,28 +398,156 @@ class _GroundTruthState extends State<GroundTruth> {
 
   Widget ethnicityDropDown() {
     return DropdownButton<Ethnicity>(
-        value: survey.ethni,
+        value: survey.ethnicity,
         onChanged: (Ethnicity newValue) {
           setState(() {
-            survey.ethni = newValue;
+            survey.ethnicity = newValue;
           });
         },
         items: Ethnicity.values.map((Ethnicity ethni) {
-          return DropdownMenuItem<Ethnicity>(value: ethni, child: Text(ethni.toString()));
+          return DropdownMenuItem<Ethnicity>(
+              value: ethni, child: Text(ethni.toString()));
         }).toList());
+  }
+}
+
+class UploadItem {
+  final String id;
+  final String tag;
+  final MediaType type;
+  final int progress;
+  final UploadTaskStatus status;
+
+  UploadItem({
+    this.id,
+    this.tag,
+    this.type,
+    this.progress = 0,
+    this.status = UploadTaskStatus.undefined,
+  });
+
+  UploadItem copyWith({UploadTaskStatus status, int progress}) => UploadItem(
+      id: this.id,
+      tag: this.tag,
+      type: this.type,
+      status: status ?? this.status,
+      progress: progress ?? this.progress);
+
+  bool isCompleted() =>
+      this.status == UploadTaskStatus.canceled ||
+      this.status == UploadTaskStatus.complete ||
+      this.status == UploadTaskStatus.failed;
+}
+
+class UploadButton extends StatefulWidget {
+  Survey survey;
+
+  UploadButton({Key key, this.survey}) : super(key: key);
+
+  @override
+  _UploadButtonState createState() => _UploadButtonState();
+}
+
+class _UploadButtonState extends State<UploadButton> {
+  FlutterUploader uploader = FlutterUploader();
+  StreamSubscription _progressSubscription;
+  StreamSubscription _resultSubscription;
+  Map<String, UploadItem> _tasks = {};
+
+
+  bool is_done_uploading_video = false;
+  bool is_done_uploading_userdata = false;
+  var api_instance = upload_api.DefaultApi();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _resultSubscription = uploader.result.listen((result) {
+      print(
+          "id: ${result.taskId}, status: ${result.status}, response: ${result.response}, statusCode: ${result.statusCode}, tag: ${result.tag}, headers: ${result.headers}");
+
+      final task = _tasks[result.taskId];
+      if (task == null) {
+        print("Task is null");
+        return;
+      }
+
+        setState(() {
+          print("Changing task");
+          _tasks[result.taskId] = task.copyWith(status: result.status);
+
+          if(result.tag == "video"){
+            is_done_uploading_video = true;
+          }
+          else if (result.tag == "userfile"){
+            is_done_uploading_userdata = true;
+          }
+          if(is_done_uploading_video && is_done_uploading_userdata){
+            Navigator.of(context).pushReplacementNamed("/home");
+          }
+        });
+
+    }, onError: (ex, stacktrace) {
+      print("exception: $ex");
+      print("stacktrace: $stacktrace" ?? "no stacktrace");
+      final exp = ex as UploadException;
+      final task = _tasks[exp.tag];
+      if (task == null) return;
+
+      setState(() {
+        _tasks[exp.tag] = task.copyWith(status: exp.status);
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _progressSubscription?.cancel();
+    _resultSubscription?.cancel();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    var w = List<Widget>();
+    for (var el in _tasks.keys) {
+      final item = _tasks[el];
+      print("${item.tag} - ${item.status}");
+
+      w.add(UploadItemView(
+        item: item,
+        onCancel: cancelUpload,
+      ));
+    }
+
+    w.add(
+      FlatButton.icon(
+        icon: Icon(
+          Icons.send,
+          color: Theme.of(context).accentColor,
+        ),
+        label: Text(
+          "SEND",
+          style: TextStyle(color: Theme.of(context).accentColor),
+        ),
+        onPressed: onPressedSendButton,
+      ),
+    );
+
+    return Card(child: Column(children: w));
   }
 
   void send_data() async {
-    print("Data sent: " + survey.video_file + " video");
+
+    print("Data sent: " + widget.survey.video_file + " video");
 //    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
 
-
-
-
-    var video_path = path_lib.dirname(survey.video_file);
+    var video_path = path_lib.dirname(widget.survey.video_file);
 //    var video_name = path_lib.basenameWithoutExtension(survey.video_file);
-    var video_name_extension = path_lib.basename(survey.video_file);
-    var extension = path_lib.extension(survey.video_file).split(".").last;
+    var video_name_extension = path_lib.basename(widget.survey.video_file);
+    var extension =
+        path_lib.extension(widget.survey.video_file).split(".").last;
 
 //    String folder = video_name;
 //    String video_path_in_s3 = path_lib.join(folder, video_name);
@@ -479,7 +555,10 @@ class _GroundTruthState extends State<GroundTruth> {
     upload_api.InlineObject inline_object = upload_api.InlineObject();
     List<FileToSend> files_to_send = List<FileToSend>();
 
-    FileToSend f_video = FileToSend(file_name_with_extension: video_name_extension, file_path: video_path, is_video: true);
+    FileToSend f_video = FileToSend(
+        file_name_with_extension: video_name_extension,
+        file_path: video_path,
+        is_video: true);
     f_video.file.name = "video";
     f_video.file.extension_ = extension;
 
@@ -487,24 +566,27 @@ class _GroundTruthState extends State<GroundTruth> {
     files_to_send.add(f_video);
 
     //Write user data to file
-    await survey.writeUserData();
+    await widget.survey.writeUserData();
 
-    FileToSend f_user = FileToSend(file_name_with_extension: path_lib.basename(survey.user_file.path), file_path: survey.user_file_path, is_video: false);
+    FileToSend f_user = FileToSend(
+        file_name_with_extension:
+            path_lib.basename(widget.survey.user_file.path),
+        file_path: widget.survey.user_file_path,
+        is_video: false);
     f_user.file.name = "user";
     f_user.file.extension_ = "txt";
     inline_object.files.add(f_user.file);
     files_to_send.add(f_user);
 
-
-    Response response = await api_instance.batchSignedUploadReqWithHttpInfo(inline_object);
+    Response response =
+        await api_instance.batchSignedUploadReqWithHttpInfo(inline_object);
     print(response.body);
     var response_map = jsonDecode(response.body);
-    survey.id = response_map['surveyId'];
+    widget.survey.id = response_map['surveyId'];
 
-
-    for(var el in response_map['signedRequests']){
-      for(var el_file in files_to_send){
-        if(el_file.file.name == el['name']){
+    for (var el in response_map['signedRequests']) {
+      for (var el_file in files_to_send) {
+        if (el_file.file.name == el['name']) {
           el_file.signed_url = el;
           print("file name " + el_file.file.name);
           print(el_file.signed_url['signedRequest']);
@@ -512,133 +594,139 @@ class _GroundTruthState extends State<GroundTruth> {
       }
     }
 
-    for (var file in files_to_send){
+    for (var file in files_to_send) {
       print("Sending file");
-      await file.send_data();
+      var taskID = await file.send_data(uploader);
+      String tag;
+      if(file.is_video){
+        tag = "video";
+      }
+      else{
+        tag = "userfile";
+      }
+      setState(() {
+        _tasks.putIfAbsent(
+            taskID,
+            () => UploadItem(
+                  id: taskID,
+                  tag: tag,
+                  type: MediaType.Video,
+                  status: UploadTaskStatus.enqueued,
+                ));
+      });
     }
-
   }
 
+  void onPressedSendButton() {
+    if (widget.survey.o2_gt == null || widget.survey.hr_gt == null) {
+      print("need gt data");
+      Fluttertoast.showToast(
+          msg: "please input data ground truth data for SpO2 and HR",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+//                timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else if (widget.survey.o2_gt > 100 ||
+        widget.survey.o2_gt < 0 ||
+        widget.survey.hr_gt < 0) {
+      print("need gt data");
+      Fluttertoast.showToast(
+          msg: "please input valid data ground truth data for SpO2 and HR",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+//                timeInSecForIosWeb: 1,
+          backgroundColor: Theme.of(context).accentColor,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    } else {
+      Alert(
+        context: context,
+        type: AlertType.warning,
+        title: "Warning",
+        desc: "Posting the data is final.",
+        buttons: [
+          DialogButton(
+            color: Theme.of(context).hintColor,
+            child: Text(
+              "Send",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () async {
+              Navigator.pop(context);
+              await send_data();
 
+//              Navigator.of(context).pushReplacementNamed("/home");
+            },
+            width: 120,
+          ),
+          DialogButton(
+            child: Text(
+              "Keep editing",
+              style: TextStyle(color: Colors.white, fontSize: 20),
+            ),
+            onPressed: () => Navigator.pop(context),
+            width: 120,
+          )
+        ],
+      ).show();
+    }
+  }
 
+  Future cancelUpload(String id) async {
+    await uploader.cancel(taskId: id);
+  }
+}
 
+typedef CancelUploadCallback = Future<void> Function(String id);
 
+class UploadItemView extends StatelessWidget {
+  final UploadItem item;
+  final CancelUploadCallback onCancel;
 
-//  Future uploadVideo({@required bool binary}) async {
-//    var video = await ImagePicker.pickVideo(source: ImageSource.gallery);
-//    if (video != null) {
-//      final String savedDir = dirname(video.path);
-//      final String filename = basename(video.path);
-//      final tag = "video upload ${_tasks.length + 1}";
-//      final url = _uploadUrl(binary: binary);
-//
-//      var fileItem = FileItem(
-//        filename: filename,
-//        savedDir: savedDir,
-//        fieldname: "file",
-//      );
-//
-//      var taskId = binary
-//          ? await uploader.enqueueBinary(
-//        url: url,
-//        file: fileItem,
-//        method: UploadMethod.POST,
-//        tag: tag,
-//        showNotification: true,
-//      )
-//          : await uploader.enqueue(
-//        url: url,
-//        data: {"name": "john"},
-//        files: [fileItem],
-//        method: UploadMethod.POST,
-//        tag: tag,
-//        showNotification: true,
-//      );
-//
-//      setState(() {
-//        _tasks.putIfAbsent(
-//            tag,
-//                () => UploadItem(
-//              id: taskId,
-//              tag: tag,
-//              type: MediaType.Video,
-//              status: UploadTaskStatus.enqueued,
-//            ));
-//      });
-//    }
-//  }
-//
-//
+  UploadItemView({
+    Key key,
+    this.item,
+    this.onCancel,
+  }) : super(key: key);
 
-//  Future<String> _uploadvideo(String fileName, int number,
-//      {String extension = 'jpg'}) async {
-//
-//    String result;
-//
-//    if (result == null) {
-//      // generating file name
-////      String fileName =
-////          "$number$extension\_${DateTime.now().millisecondsSinceEpoch}.$extension";
-//
-//      AwsS3 awsS3 = AwsS3(
-//          awsFolderPath: awsFolderPath,
-//          file: await fp.FilePicker.getFile(type: fp.FileType.video),
-//          fileNameWithExt: fileName,
-//          poolId: poolId,
-//          region: Regions.AP_SOUTHEAST_2,
-//          bucketName: bucketName);
-//
-//      setState(() => isFileUploading = true);
-//      displayUploadDialog(awsS3);
-//      try {
-//        try {
-//          result = await awsS3.uploadFile;
-//          debugPrint("Result :'$result'.");
-//        } on PlatformException {
-//          debugPrint("Result :'$result'.");
-//        }
-//      } on PlatformException catch (e) {
-//        debugPrint("Failed :'${e.message}'.");
-//      }
-//    }
-//    Navigator.of(context).pop();
-//    return result;
-//  }
-//
-//  Future displayUploadDialog(AwsS3 awsS3) {
-//    return showDialog(
-//      context: context,
-//      barrierDismissible: false,
-//      builder: (context) => StreamBuilder(
-//        stream: awsS3.getUploadStatus,
-//        builder: (BuildContext context, AsyncSnapshot snapshot) {
-//          return buildFileUploadDialog(snapshot, context);
-//        },
-//      ),
-//    );
-//  }
-//
-//  AlertDialog buildFileUploadDialog(
-//      AsyncSnapshot snapshot, BuildContext context) {
-//    return AlertDialog(
-//      title: Container(
-//        padding: EdgeInsets.all(6),
-//        child: LinearProgressIndicator(
-//          value: (snapshot.data != null) ? snapshot.data / 100 : 0,
-//          valueColor:
-//          AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColorDark),
-//        ),
-//      ),
-//      content: Padding(
-//        padding: const EdgeInsets.symmetric(horizontal: 6),
-//        child: Row(
-//          mainAxisAlignment: MainAxisAlignment.center,
-//          children: [
-//            Expanded(child: Text('Uploading...')),
-//            Text("${snapshot.data ?? 0}%"),
-//          ],
-//        ),
-//      ),
-//    );
-//  }
+  @override
+  Widget build(BuildContext context) {
+    final progress = item.progress.toDouble() / 100;
+    final widget = item.status == UploadTaskStatus.running
+        ? LinearProgressIndicator(value: progress)
+        : Container();
+    final buttonWidget = item.status == UploadTaskStatus.running
+        ? Container(
+            height: 50,
+            width: 50,
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () => onCancel(item.id),
+            ),
+          )
+        : Container();
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(item.tag),
+              Container(
+                height: 5.0,
+              ),
+              Text(item.status.description),
+              Container(
+                height: 5.0,
+              ),
+              widget
+            ],
+          ),
+        ),
+        buttonWidget
+      ],
+    );
+  }
 }

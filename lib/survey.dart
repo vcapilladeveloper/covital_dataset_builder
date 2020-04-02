@@ -10,6 +10,29 @@ import 'dart:convert';
 
 part 'survey.g.dart';
 
+
+@JsonSerializable()
+class CommercialDevice{
+  String brand;
+  String reference_number;
+
+  CommercialDevice();
+
+  /// A necessary factory constructor for creating a new User instance
+  /// from a map. Pass the map to the generated `_$UserFromJson()` constructor.
+  /// The constructor is named after the source class, in this case, User.
+  factory CommercialDevice.fromJson(Map<String, dynamic> json) => _$CommercialDeviceFromJson(json);
+
+  /// `toJson` is the convention for a class to declare support for serialization
+  /// to JSON. The implementation simply calls the private, generated
+  /// helper method `_$UserToJson`.
+  Map<String, dynamic> toJson() => _$CommercialDeviceToJson(this);
+
+
+}
+
+
+
 enum Sex{
   undefinied,
   male,
@@ -51,6 +74,8 @@ class SurveyDataExport{
 
   String id;
 
+  CommercialDevice commercialDevice;
+
 
   List<double> accelerometerValues = List<double>();
   List<double> userAccelerometerValues = List<double>();
@@ -66,7 +91,7 @@ class SurveyDataExport{
   String _user_file_path;
 
   Sex sex = Sex.undefinied;
-  Ethnicity ethni = Ethnicity.undefinied;
+  Ethnicity ethnicity = Ethnicity.undefinied;
 
   String phone_brand;
   String phone_reference;

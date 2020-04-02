@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
-import 'user_data.dart';
+import 'survey.dart';
 
 class UserDataContainer extends StatefulWidget {
 // Your apps state is managed by the container
@@ -12,13 +12,13 @@ class UserDataContainer extends StatefulWidget {
 
   final Widget child;
 
-  UserData user_data;
+  CommercialDevice commercial_device;
 
   List<CameraDescription> cameras;
 
 //  String last_video;
 
-  UserDataContainer({Key key, this.child, this.user_data, this.cameras
+  UserDataContainer({Key key, this.child, this.commercial_device, this.cameras
 //    @required this.userdata,
   }) {
 //    print("CREATED USERDATA CONTAINER");
@@ -55,7 +55,7 @@ class UserDataContainerState extends State<UserDataContainer> {
   List<CameraDescription> cameras;
 
 
-  UserData user_data;
+  CommercialDevice commercial_device;
 
 
   bool is_init = false;
@@ -68,7 +68,7 @@ class UserDataContainerState extends State<UserDataContainer> {
     print("Init state container user data!");
     cameras = widget.cameras;
 //    last_video = widget.last_video;
-    user_data = widget.user_data;
+    commercial_device = widget.commercial_device;
   }
 
 
@@ -82,10 +82,10 @@ class UserDataContainerState extends State<UserDataContainer> {
   initialize() async {
     print("init state");
     cameras = await availableCameras();
-    if(user_data == null){
-      user_data = UserData();
-      assert(user_data.commercial_device == null);
-    }
+//    if(commercial_device == null){
+//      commercial_device = CommercialDevice();
+//      assert(commercial_device != null);
+//    }
     is_init = true;
   }
 

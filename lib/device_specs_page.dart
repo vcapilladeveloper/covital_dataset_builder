@@ -1,6 +1,7 @@
-import 'package:covital_dataset_builder/user_data.dart';
+//import 'package:covital_dataset_builder/user_data.dart';
 import 'package:flutter/material.dart';
 import 'user_data_container.dart';
+import 'survey.dart';
 
 class DeviceSpecsScreen extends StatefulWidget {
   @override
@@ -115,12 +116,14 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
   }
 
   void save() {
-    var settings =
-        UserDataContainer.of(context).data.user_data.commercial_device;
-    settings = CommercialDevice();
+    UserDataContainer.of(context).data.commercial_device = CommercialDevice();
+    var settings = UserDataContainer.of(context).data.commercial_device;
 
     settings.brand = brand;
     settings.reference_number = reference_number;
+
+    assert(UserDataContainer.of(context).data.commercial_device != null);
+
 
     Navigator.of(context).pushReplacementNamed('/home');
   }
