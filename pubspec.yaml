@@ -52,6 +52,7 @@ dependencies:
 #  image_picker:
   hive:
   hive_flutter:
+  screen:
 
 dev_dependencies:
   flutter_test:

@@ -51,8 +51,8 @@ class _HomeState extends State<Home> {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 5;
-  int time_before_recording_in_sec = 5;
+  int time_recording_in_sec = 30;
+  int time_before_recording_in_sec = 10;
   bool _loading_recording_process = false;
 
   @override
@@ -67,6 +67,9 @@ class _HomeState extends State<Home> {
   @protected
   Future runInitTasks() async {
     var cameras = UserDataContainer.of(context).data.cameras;
+
+    onNewCameraSelected(cameras[0]);
+
   }
 
   @override
@@ -133,7 +136,7 @@ class _HomeState extends State<Home> {
           ],
         ),
 
-    drawer: DrawerOnly(),
+//    drawer: DrawerOnly(),
 
     );
   }

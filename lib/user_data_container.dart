@@ -6,6 +6,10 @@ import 'commercial_device.dart';
 
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+// Import package
+import 'package:screen/screen.dart';
+
+
 
 class UserDataContainer extends StatefulWidget {
 // Your apps state is managed by the container
@@ -84,6 +88,19 @@ class UserDataContainerState extends State<UserDataContainer> {
 
 
   initialize() async {
+
+    // Get the current brightness:
+//    double brightness = await Screen.brightness;
+
+// Set the brightness:
+//    Screen.setBrightness(0.5);
+
+// Check if the screen is kept on:
+//    bool isKeptOn = await Screen.isKeptOn;
+
+// Prevent screen from going into sleep mode:
+    Screen.keepOn(true);
+
     registerHiveCommercialDevice();
 
     print("init state");

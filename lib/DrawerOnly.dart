@@ -36,7 +36,7 @@ class _DrawerOnlyState extends State<DrawerOnly>
 
               DrawerHeader(
                 decoration: BoxDecoration(
-                    color: Theme.of(context).accentColor
+                    color: Colors.white
                 ),
                 child: Image.asset("assets/logo.png", fit: BoxFit.fill,),
               ),

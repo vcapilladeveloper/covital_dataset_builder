@@ -28,6 +28,13 @@ enum Ethnicity{
   asian,
 }
 
+enum Health{
+  undefinied,
+  healthy,
+  recovering,
+  sick,
+}
+
 
 //@JsonSerializable()
 class Survey extends SurveyDataExport{
@@ -73,6 +80,7 @@ class SurveyDataExport{
 
   Sex sex = Sex.undefinied;
   Ethnicity ethnicity = Ethnicity.undefinied;
+  Health health = Health.undefinied;
 
   String phone_brand;
   String phone_reference;
@@ -195,6 +203,22 @@ class SurveyDataExport{
   Map<String, dynamic> toJson() => _$SurveyDataExportToJson(this);
 
 
+  void clear(){
+    clearSensorData();
+    o2_gt = null;
+    hr_gt = null;
+
+    age = null;
+    weight = null;
+
+    _user_file = null;
+    _user_file_path = null;
+
+    sex = Sex.undefinied;
+    ethnicity = Ethnicity.undefinied;
+    health = Health.undefinied;
+
+  }
 
   void clearSensorData(){
     accelerometerValues.clear();

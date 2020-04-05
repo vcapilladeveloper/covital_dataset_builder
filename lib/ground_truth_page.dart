@@ -128,11 +128,20 @@ class _GroundTruthState extends State<GroundTruth> {
   Future<void> runInitTasks() async {
 //    await readEnv();
 
-    survey = ModalRoute.of(context).settings.arguments;
+    survey = ModalRoute
+        .of(context)
+        .settings
+        .arguments;
 
-    survey.commercialDevice = UserDataContainer.of(context).data.commercial_device;
+    survey.commercialDevice = UserDataContainer
+        .of(context)
+        .data
+        .commercial_device;
 
-    assert(UserDataContainer.of(context).data.commercial_device != null);
+    assert(UserDataContainer
+        .of(context)
+        .data
+        .commercial_device != null);
     assert(survey.commercialDevice != null);
 
     _controller = VideoPlayerController.file(File(survey.video_file))
@@ -189,7 +198,7 @@ class _GroundTruthState extends State<GroundTruth> {
       children: <Widget>[
         deviceInfo(),
 
-        spo2DeviceInfo(),
+//        spo2DeviceInfo(),
 
         Chewie(
           controller: _chewieController,
@@ -199,10 +208,12 @@ class _GroundTruthState extends State<GroundTruth> {
 
         UserDataCard(),
 
+        SPO2DeviceCard(),
+
         init_app
             ? UploadButton(
-                survey: survey,
-              )
+          survey: survey,
+        )
             : Container(),
 
 //        _controller.value.initialized
@@ -226,14 +237,16 @@ class _GroundTruthState extends State<GroundTruth> {
     );
   }
 
-  Widget spo2DeviceInfo() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: <Widget>[
-        Text("Spo2 device: " + survey.commercialDevice.reference_number.toString() + " " + survey.commercialDevice.brand.toString()),
-      ],
-    );
-  }
+//  Widget spo2DeviceInfo() {
+//    return Row(
+//      mainAxisAlignment: MainAxisAlignment.start,
+//      children: <Widget>[
+//        Text("Spo2 device: " +
+//            survey.commercialDevice.reference_number.toString() + " " +
+//            survey.commercialDevice.brand.toString()),
+//      ],
+//    );
+//  }
 
   Widget GTMeasurements() {
     return Padding(
@@ -252,8 +265,8 @@ class _GroundTruthState extends State<GroundTruth> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.input),
                         labelText: "SpO2 (%)"
-                        //                  labelText: 'Frequency of capture (s)'
-                        ),
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
@@ -278,8 +291,8 @@ class _GroundTruthState extends State<GroundTruth> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.input),
                         labelText: "HR (bpm)"
-                        //                  labelText: 'Frequency of capture (s)'
-                        ),
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
@@ -319,8 +332,8 @@ class _GroundTruthState extends State<GroundTruth> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.input),
                         labelText: "Age (years)"
-                        //                  labelText: 'Frequency of capture (s)'
-                        ),
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
@@ -345,8 +358,8 @@ class _GroundTruthState extends State<GroundTruth> {
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.input),
                         labelText: "Weight (kg)"
-                        //                  labelText: 'Frequency of capture (s)'
-                        ),
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
@@ -378,6 +391,13 @@ class _GroundTruthState extends State<GroundTruth> {
                         Text("Ethnicity"),
                         ethnicityDropDown(),
                       ]),
+                  Divider(),
+                  Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Text("Health"),
+                        healthDropDown(),
+                      ]),
                 ],
               )),
         ));
@@ -408,6 +428,79 @@ class _GroundTruthState extends State<GroundTruth> {
           return DropdownMenuItem<Ethnicity>(
               value: ethni, child: Text(ethni.toString()));
         }).toList());
+  }
+
+  Widget healthDropDown() {
+    return DropdownButton<Health>(
+        value: survey.health,
+        onChanged: (Health newValue) {
+          setState(() {
+            survey.health = newValue;
+          });
+        },
+        items: Health.values.map((Health health) {
+          return DropdownMenuItem<Health>(
+              value: health, child: Text(health.toString()));
+        }).toList());
+  }
+
+
+  Widget SPO2DeviceCard() {
+    var settings = UserDataContainer.of(context).data.commercial_device;
+    return Padding(
+        padding: EdgeInsets.all(10),
+        child: Card(
+          child: Padding(
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  ListTile(
+                    title: Text("SpO2 Device"),
+                  ),
+                  TextFormField(
+//                  keyboardType: TextInputType.number,
+                  initialValue: settings.brand == null ? "" : settings.brand,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "brand"
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          settings.brand = s;
+                          settings.save();
+                        });
+                      });
+                    },
+
+                  ),
+                  Divider(),
+                  TextFormField(
+                    initialValue: settings.reference_number == null ? "" : settings.reference_number,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.input),
+                        labelText: "Reference"
+                      //                  labelText: 'Frequency of capture (s)'
+                    ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          settings.reference_number = s;
+                          settings.save();
+                        });
+                      });
+                    },
+
+                  ),
+                  ]
+              )),
+        ));
   }
 }
 
@@ -455,27 +548,41 @@ class _UploadButtonState extends State<UploadButton> {
   Map<String, UploadItem> _tasks = {};
 
 
+  bool _started_upload = false;
   bool is_done_uploading_video = false;
   bool is_done_uploading_userdata = false;
   var api_instance = upload_api.DefaultApi();
+
+  double progress_value = 0;
 
   @override
   void initState() {
     super.initState();
 
+    _progressSubscription = uploader.progress.listen((progress) {
+      final task = _tasks[progress.tag];
+      print("progress: ${progress.progress} , tag: ${progress.tag}");
+      if (progress.tag == "video"){
+        setState(() {
+          progress_value = progress.progress.toDouble() / 100;
+        });
+      }
+    });
+
     _resultSubscription = uploader.result.listen((result) {
       print(
           "id: ${result.taskId}, status: ${result.status}, response: ${result.response}, statusCode: ${result.statusCode}, tag: ${result.tag}, headers: ${result.headers}");
 
-      final task = _tasks[result.taskId];
+      final task = _tasks[result.tag];
       if (task == null) {
         print("Task is null");
         return;
       }
 
+      print(is_done_uploading_video.toString() + " and " + is_done_uploading_userdata.toString() + " " + _started_upload.toString());
         setState(() {
           print("Changing task");
-          _tasks[result.taskId] = task.copyWith(status: result.status);
+          _tasks[result.tag] = task.copyWith(status: result.status);
 
           if(result.tag == "video"){
             is_done_uploading_video = true;
@@ -484,7 +591,14 @@ class _UploadButtonState extends State<UploadButton> {
             is_done_uploading_userdata = true;
           }
           if(is_done_uploading_video && is_done_uploading_userdata){
-            Navigator.of(context).pushReplacementNamed("/home");
+            _started_upload = false;
+            is_done_uploading_video = false;
+            is_done_uploading_userdata = false;
+            progress_value = 0;
+
+            widget.survey.clear();
+
+            Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
           }
         });
 
@@ -508,17 +622,14 @@ class _UploadButtonState extends State<UploadButton> {
     _resultSubscription?.cancel();
   }
 
+
   @override
   Widget build(BuildContext context) {
     var w = List<Widget>();
-    for (var el in _tasks.keys) {
-      final item = _tasks[el];
-      print("${item.tag} - ${item.status}");
 
-      w.add(UploadItemView(
-        item: item,
-        onCancel: cancelUpload,
-      ));
+
+    if(_started_upload == true){
+      w.add(LinearProgressIndicator(value: progress_value,));
     }
 
     w.add(
@@ -531,14 +642,28 @@ class _UploadButtonState extends State<UploadButton> {
           "SEND",
           style: TextStyle(color: Theme.of(context).accentColor),
         ),
-        onPressed: onPressedSendButton,
+        onPressed: _started_upload ? null : onPressedSendButton,
       ),
     );
+
+    for (var el in _tasks.keys) {
+      final item = _tasks[el];
+      print("${item.tag} - ${item.status}");
+
+      w.add(UploadItemView(
+        item: item,
+        onCancel: cancelUpload,
+      ));
+    }
 
     return Card(child: Column(children: w));
   }
 
   void send_data() async {
+
+    setState(() {
+      _started_upload = true;
+    });
 
     print("Data sent: " + widget.survey.video_file + " video");
 //    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
@@ -606,7 +731,7 @@ class _UploadButtonState extends State<UploadButton> {
       }
       setState(() {
         _tasks.putIfAbsent(
-            taskID,
+            tag,
             () => UploadItem(
                   id: taskID,
                   tag: tag,
@@ -641,36 +766,38 @@ class _UploadButtonState extends State<UploadButton> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
-      Alert(
-        context: context,
-        type: AlertType.warning,
-        title: "Warning",
-        desc: "Posting the data is final.",
-        buttons: [
-          DialogButton(
-            color: Theme.of(context).hintColor,
-            child: Text(
-              "Send",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () async {
-              Navigator.pop(context);
-              await send_data();
 
-//              Navigator.of(context).pushReplacementNamed("/home");
-            },
-            width: 120,
-          ),
-          DialogButton(
-            child: Text(
-              "Keep editing",
-              style: TextStyle(color: Colors.white, fontSize: 20),
-            ),
-            onPressed: () => Navigator.pop(context),
-            width: 120,
-          )
-        ],
-      ).show();
+      send_data();
+//      Alert(
+//        context: context,
+//        type: AlertType.warning,
+//        title: "Warning",
+//        desc: "Posting the data is final.",
+//        buttons: [
+//          DialogButton(
+//            color: Theme.of(context).hintColor,
+//            child: Text(
+//              "Send",
+//              style: TextStyle(color: Colors.white, fontSize: 20),
+//            ),
+//            onPressed: () async {
+//              Navigator.pop(context);
+//              await send_data();
+//
+////              Navigator.of(context).pushReplacementNamed("/home");
+//            },
+//            width: 120,
+//          ),
+//          DialogButton(
+//            child: Text(
+//              "Keep editing",
+//              style: TextStyle(color: Colors.white, fontSize: 20),
+//            ),
+//            onPressed: () => Navigator.pop(context),
+//            width: 120,
+//          )
+//        ],
+//      ).show();
     }
   }
 
