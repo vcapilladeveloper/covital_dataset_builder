@@ -59,10 +59,10 @@ class FileToSend {
         showNotification: true,
       );
     } else {
-      return await uploader.enqueue(
+      return await uploader.enqueueBinary(
         url: signed_url['signedRequest'],
 //        data: {"name": "john"},
-        files: [fileItem],
+        file: fileItem,
         method: UploadMethod.PUT,
         tag: "userfile",
 //        showNotification: true,
@@ -699,7 +699,7 @@ class _UploadButtonState extends State<UploadButton> {
         file_path: widget.survey.user_file_path,
         is_video: false);
     f_user.file.name = "user";
-    f_user.file.extension_ = "txt";
+    f_user.file.extension_ = "json";
     inline_object.files.add(f_user.file);
     files_to_send.add(f_user);
 
