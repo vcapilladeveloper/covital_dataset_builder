@@ -136,7 +136,7 @@ class _HomeState extends State<Home> {
           ],
         ),
 
-//    drawer: DrawerOnly(),
+    drawer: DrawerOnly(),
 
     );
   }

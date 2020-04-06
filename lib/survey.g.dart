@@ -28,6 +28,7 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
     ..weight = (json['weight'] as num)?.toDouble()
     ..sex = _$enumDecodeNullable(_$SexEnumMap, json['sex'])
     ..ethnicity = _$enumDecodeNullable(_$EthnicityEnumMap, json['ethnicity'])
+    ..health = _$enumDecodeNullable(_$HealthEnumMap, json['health'])
     ..phone_brand = json['phone_brand'] as String
     ..phone_reference = json['phone_reference'] as String;
 }
@@ -45,6 +46,7 @@ Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
       'weight': instance.weight,
       'sex': _$SexEnumMap[instance.sex],
       'ethnicity': _$EthnicityEnumMap[instance.ethnicity],
+      'health': _$HealthEnumMap[instance.health],
       'phone_brand': instance.phone_brand,
       'phone_reference': instance.phone_reference,
     };
@@ -93,4 +95,11 @@ const _$EthnicityEnumMap = {
   Ethnicity.black: 'black',
   Ethnicity.latino: 'latino',
   Ethnicity.asian: 'asian',
+};
+
+const _$HealthEnumMap = {
+  Health.undefinied: 'undefinied',
+  Health.healthy: 'healthy',
+  Health.recovering: 'recovering',
+  Health.sick: 'sick',
 };

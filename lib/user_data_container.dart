@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-
+import 'user_data.dart';
 import 'commercial_device.dart';
 
 import 'package:hive/hive.dart';
@@ -64,6 +64,8 @@ class UserDataContainerState extends State<UserDataContainer> {
 
   CommercialDevice commercial_device;
   Box commercial_device_hive;
+  Box user_settings_hive;
+  UserSettings user_settings;
 
 
   bool is_init = false;
@@ -102,16 +104,22 @@ class UserDataContainerState extends State<UserDataContainer> {
     Screen.keepOn(true);
 
     registerHiveCommercialDevice();
+    registerHiveuserSettings();
 
     print("init state");
     cameras = await availableCameras();
     await Hive.initFlutter();
     commercial_device_hive = await Hive.openBox('lifelapseparam');
+    user_settings_hive = await Hive.openBox('usersettings');
 
     if(commercial_device_hive.isEmpty){
       commercial_device_hive.add(CommercialDevice());
     }
     commercial_device = commercial_device_hive.getAt(0);
+    if(user_settings_hive.isEmpty){
+      user_settings_hive.add(UserSettings());
+    }
+    user_settings = user_settings_hive.getAt(0);
 //    if(commercial_device == null){
 //      commercial_device = CommercialDevice();
 //      assert(commercial_device != null);
