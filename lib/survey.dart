@@ -10,22 +10,33 @@ import 'dart:convert';
 
 import 'commercial_device.dart';
 
+import 'dart:core';
+
 part 'survey.g.dart';
 
 
 
+
+
 enum Sex{
-  undefinied,
+  undefined,
   male,
   female,
 }
 
 enum Ethnicity{
-  undefinied,
+  undefined,
   white,
   black,
   latino,
   asian,
+}
+
+enum Health{
+  undefined,
+  healthy,
+  recovering,
+  sick,
 }
 
 
@@ -55,15 +66,21 @@ class SurveyDataExport{
 
   String id;
 
-  CommercialDevice commercialDevice;
+  CommercialDevice spo2Device;
+
+  DateTime startTimeOfRecording;
 
 
   List<double> accelerometerValues = List<double>();
   List<double> userAccelerometerValues = List<double>();
   List<double> gyroscopeValues = List<double>();
 
-  double o2_gt;
-  double hr_gt;
+  List<DateTime> accelerometerTimestamps = List<DateTime>();
+  List<DateTime> gyroscopeTimestamps = List<DateTime>();
+  List<DateTime> userAccelerometerTimestamps = List<DateTime>();
+
+  double o2gt;
+  double hrgt;
 
   int age;
   double weight;
@@ -71,11 +88,14 @@ class SurveyDataExport{
   File _user_file;
   String _user_file_path;
 
-  Sex sex = Sex.undefinied;
-  Ethnicity ethnicity = Ethnicity.undefinied;
+  Sex sex = Sex.undefined;
+//  @deprecated
+//  Ethnicity ethnicity = Ethnicity.undefinied;
+  int skinColor;
+  Health health = Health.undefined;
 
-  String phone_brand;
-  String phone_reference;
+  String phoneBrand;
+  String phoneModel;
 
   Map<String, dynamic> _deviceData;
 
@@ -99,12 +119,12 @@ class SurveyDataExport{
     try {
       if (Platform.isAndroid) {
         _deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        phone_brand = _deviceData['brand'];
-        phone_reference = _deviceData['model'];
+        phoneBrand = _deviceData['brand'];
+        phoneModel = _deviceData['model'];
       } else if (Platform.isIOS) {
         _deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-        phone_reference = _deviceData['model'];
-        phone_brand = "iPhone";
+        phoneModel = _deviceData['model'];
+        phoneBrand = "iPhone";
       }
     } on PlatformException {
       _deviceData = <String, dynamic>{
@@ -195,11 +215,31 @@ class SurveyDataExport{
   Map<String, dynamic> toJson() => _$SurveyDataExportToJson(this);
 
 
+  void clear(){
+    clearSensorData();
+    o2gt = null;
+    hrgt = null;
+
+    age = null;
+    weight = null;
+
+    _user_file = null;
+    _user_file_path = null;
+
+    sex = Sex.undefined;
+//    ethnicity = Ethnicity.undefinied;
+    health = Health.undefined;
+    skinColor = null;
+
+  }
 
   void clearSensorData(){
     accelerometerValues.clear();
     gyroscopeValues.clear();
     userAccelerometerValues.clear();
+    accelerometerTimestamps.clear();
+    userAccelerometerTimestamps.clear();
+    gyroscopeTimestamps.clear();
   }
 
 }

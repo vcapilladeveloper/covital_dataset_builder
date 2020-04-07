@@ -37,7 +37,7 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
   Future runInitTasks() async {
     var settings = UserDataContainer.of(context).data.commercial_device;
     brand = settings.brand;
-    reference_number = settings.reference_number;
+    reference_number = settings.model;
   }
 
   @override
@@ -103,7 +103,7 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
                               ),
                               TextFormField(
 //                                controller: _controller_reference,
-                                initialValue: settings.reference_number == null ? "" : settings.reference_number,
+                                initialValue: settings.model == null ? "" : settings.model,
 //                                keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
                                     border: OutlineInputBorder(),
@@ -143,7 +143,7 @@ class _DeviceSpecsScreenState extends State<DeviceSpecsScreen> {
     }
 
     settings.brand = brand;
-    settings.reference_number = reference_number;
+    settings.model = reference_number;
 
     assert(UserDataContainer.of(context).data.commercial_device != null);
 

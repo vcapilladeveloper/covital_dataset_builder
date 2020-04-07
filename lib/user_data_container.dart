@@ -1,11 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-
+import 'user_data.dart';
 import 'commercial_device.dart';
 
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+// Import package
+import 'package:screen/screen.dart';
+
+
 
 class UserDataContainer extends StatefulWidget {
 // Your apps state is managed by the container
@@ -60,11 +64,21 @@ class UserDataContainerState extends State<UserDataContainer> {
 
   CommercialDevice commercial_device;
   Box commercial_device_hive;
+  Box user_settings_hive;
+  UserSettings user_settings;
 
 
   bool is_init = false;
 //  bool isSync = false;
 
+
+  List<ColorSwatch> colors = [MaterialColor(0xffdfbaa7, Map<int, Color>()),
+    MaterialColor(0xffdea887, Map<int, Color>()),
+    MaterialColor(0xffd08a6f, Map<int, Color>()),
+//    MaterialColor(0xffd08870, Map<int, Color>()),
+    MaterialColor(0xff9f614a, Map<int, Color>()),
+    MaterialColor(0xff6a4c48, Map<int, Color>()),
+    MaterialColor(0xff3a3c37, Map<int, Color>())];
 
 
   void initState() {
@@ -84,17 +98,36 @@ class UserDataContainerState extends State<UserDataContainer> {
 
 
   initialize() async {
+
+    // Get the current brightness:
+//    double brightness = await Screen.brightness;
+
+// Set the brightness:
+//    Screen.setBrightness(0.5);
+
+// Check if the screen is kept on:
+//    bool isKeptOn = await Screen.isKeptOn;
+
+// Prevent screen from going into sleep mode:
+    Screen.keepOn(true);
+
     registerHiveCommercialDevice();
+    registerHiveuserSettings();
 
     print("init state");
     cameras = await availableCameras();
     await Hive.initFlutter();
     commercial_device_hive = await Hive.openBox('lifelapseparam');
+    user_settings_hive = await Hive.openBox('usersettings');
 
     if(commercial_device_hive.isEmpty){
       commercial_device_hive.add(CommercialDevice());
     }
     commercial_device = commercial_device_hive.getAt(0);
+    if(user_settings_hive.isEmpty){
+      user_settings_hive.add(UserSettings());
+    }
+    user_settings = user_settings_hive.getAt(0);
 //    if(commercial_device == null){
 //      commercial_device = CommercialDevice();
 //      assert(commercial_device != null);

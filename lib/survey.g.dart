@@ -9,10 +9,12 @@ part of 'survey.dart';
 SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
   return SurveyDataExport()
     ..id = json['id'] as String
-    ..commercialDevice = json['commercialDevice'] == null
+    ..spo2Device = json['spo2Device'] == null
         ? null
-        : CommercialDevice.fromJson(
-            json['commercialDevice'] as Map<String, dynamic>)
+        : CommercialDevice.fromJson(json['spo2Device'] as Map<String, dynamic>)
+    ..startTimeOfRecording = json['startTimeOfRecording'] == null
+        ? null
+        : DateTime.parse(json['startTimeOfRecording'] as String)
     ..accelerometerValues = (json['accelerometerValues'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
@@ -22,31 +24,53 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
     ..gyroscopeValues = (json['gyroscopeValues'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
-    ..o2_gt = (json['o2_gt'] as num)?.toDouble()
-    ..hr_gt = (json['hr_gt'] as num)?.toDouble()
+    ..accelerometerTimestamps = (json['accelerometerTimestamps'] as List)
+        ?.map((e) => e == null ? null : DateTime.parse(e as String))
+        ?.toList()
+    ..gyroscopeTimestamps = (json['gyroscopeTimestamps'] as List)
+        ?.map((e) => e == null ? null : DateTime.parse(e as String))
+        ?.toList()
+    ..userAccelerometerTimestamps =
+        (json['userAccelerometerTimestamps'] as List)
+            ?.map((e) => e == null ? null : DateTime.parse(e as String))
+            ?.toList()
+    ..o2gt = (json['o2gt'] as num)?.toDouble()
+    ..hrgt = (json['hrgt'] as num)?.toDouble()
     ..age = json['age'] as int
     ..weight = (json['weight'] as num)?.toDouble()
     ..sex = _$enumDecodeNullable(_$SexEnumMap, json['sex'])
-    ..ethnicity = _$enumDecodeNullable(_$EthnicityEnumMap, json['ethnicity'])
-    ..phone_brand = json['phone_brand'] as String
-    ..phone_reference = json['phone_reference'] as String;
+    ..skinColor = json['skinColor'] as int
+    ..health = _$enumDecodeNullable(_$HealthEnumMap, json['health'])
+    ..phoneBrand = json['phoneBrand'] as String
+    ..phoneModel = json['phoneModel'] as String;
 }
 
 Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'commercialDevice': instance.commercialDevice,
+      'spo2Device': instance.spo2Device,
+      'startTimeOfRecording': instance.startTimeOfRecording?.toIso8601String(),
       'accelerometerValues': instance.accelerometerValues,
       'userAccelerometerValues': instance.userAccelerometerValues,
       'gyroscopeValues': instance.gyroscopeValues,
-      'o2_gt': instance.o2_gt,
-      'hr_gt': instance.hr_gt,
+      'accelerometerTimestamps': instance.accelerometerTimestamps
+          ?.map((e) => e?.toIso8601String())
+          ?.toList(),
+      'gyroscopeTimestamps': instance.gyroscopeTimestamps
+          ?.map((e) => e?.toIso8601String())
+          ?.toList(),
+      'userAccelerometerTimestamps': instance.userAccelerometerTimestamps
+          ?.map((e) => e?.toIso8601String())
+          ?.toList(),
+      'o2gt': instance.o2gt,
+      'hrgt': instance.hrgt,
       'age': instance.age,
       'weight': instance.weight,
       'sex': _$SexEnumMap[instance.sex],
-      'ethnicity': _$EthnicityEnumMap[instance.ethnicity],
-      'phone_brand': instance.phone_brand,
-      'phone_reference': instance.phone_reference,
+      'skinColor': instance.skinColor,
+      'health': _$HealthEnumMap[instance.health],
+      'phoneBrand': instance.phoneBrand,
+      'phoneModel': instance.phoneModel,
     };
 
 T _$enumDecode<T>(
@@ -82,15 +106,14 @@ T _$enumDecodeNullable<T>(
 }
 
 const _$SexEnumMap = {
-  Sex.undefinied: 'undefinied',
+  Sex.undefined: 'undefined',
   Sex.male: 'male',
   Sex.female: 'female',
 };
 
-const _$EthnicityEnumMap = {
-  Ethnicity.undefinied: 'undefinied',
-  Ethnicity.white: 'white',
-  Ethnicity.black: 'black',
-  Ethnicity.latino: 'latino',
-  Ethnicity.asian: 'asian',
+const _$HealthEnumMap = {
+  Health.undefined: 'undefined',
+  Health.healthy: 'healthy',
+  Health.recovering: 'recovering',
+  Health.sick: 'sick',
 };

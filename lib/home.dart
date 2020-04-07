@@ -51,8 +51,8 @@ class _HomeState extends State<Home> {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 5;
-  int time_before_recording_in_sec = 5;
+  int time_recording_in_sec = 30;
+  int time_before_recording_in_sec = 10;
   bool _loading_recording_process = false;
 
   @override
@@ -67,6 +67,9 @@ class _HomeState extends State<Home> {
   @protected
   Future runInitTasks() async {
     var cameras = UserDataContainer.of(context).data.cameras;
+
+    onNewCameraSelected(cameras[0]);
+
   }
 
   @override
@@ -327,6 +330,9 @@ class _HomeState extends State<Home> {
         survey.accelerometerValues.add(event.x);
         survey.accelerometerValues.add(event.y);
         survey.accelerometerValues.add(event.z);
+
+        survey.accelerometerTimestamps.add(DateTime.now());
+
       });
     }));
     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
@@ -334,6 +340,7 @@ class _HomeState extends State<Home> {
         survey.gyroscopeValues.add(event.x);
         survey.gyroscopeValues.add(event.y);
         survey.gyroscopeValues.add(event.z);
+        survey.gyroscopeTimestamps.add(DateTime.now());
       });
     }));
     _streamSubscriptions
@@ -342,6 +349,7 @@ class _HomeState extends State<Home> {
         survey.userAccelerometerValues.add(event.x);
         survey.userAccelerometerValues.add(event.y);
         survey.userAccelerometerValues.add(event.z);
+        survey.userAccelerometerTimestamps.add(DateTime.now());
       });
     }));
 
@@ -370,6 +378,9 @@ class _HomeState extends State<Home> {
     try {
       survey.video_file = filePath;
       controller.flash(true);
+
+      survey.startTimeOfRecording = DateTime.now();
+
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
       _showCameraException(e);
@@ -401,6 +412,7 @@ class _HomeState extends State<Home> {
           arguments: survey,
         );
       } else {
+        survey.startTimeOfRecording = null;
         survey.clearSensorData();
       }
     });

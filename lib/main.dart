@@ -61,14 +61,14 @@ class _LoadingScreenState extends State<LoadingScreen>{
   Future runInitTasks() async {
     await UserDataContainer.of(context).data.initialize();
     print("init state done: " + UserDataContainer.of(context).data.commercial_device.toString());
-    if(UserDataContainer.of(context).data.commercial_device.brand == null){
-      print("Going to specs");
-      Navigator.of(context).pushReplacementNamed('/specs');
-    }
-    else {
+//    if(UserDataContainer.of(context).data.commercial_device.brand == null){
+//      print("Going to specs");
+//      Navigator.of(context).pushReplacementNamed('/specs');
+//    }
+//    else {
       print("Going to home");
       Navigator.of(context).pushReplacementNamed('/home');
-    }
+//    }
   }
 
 
@@ -77,11 +77,11 @@ class _LoadingScreenState extends State<LoadingScreen>{
   Widget build(BuildContext context){
     final ThemeData theme = Theme.of(context);
 //    var bright = theme.brightness;
-    String icon = 'assets/images/logo_dark.png';
+//    String icon = 'assets/images/logo_dark.png';
 
     return Scaffold(
       body: new Center(
-        child: new Icon(Icons.file_download),
+        child: Image.asset("assets/logo.png", fit: BoxFit.fill,),
       ),
     );
   }
