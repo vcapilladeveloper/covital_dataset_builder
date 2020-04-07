@@ -72,6 +72,14 @@ class UserDataContainerState extends State<UserDataContainer> {
 //  bool isSync = false;
 
 
+  List<ColorSwatch> colors = [MaterialColor(0xffdfbaa7, Map<int, Color>()),
+    MaterialColor(0xffdea887, Map<int, Color>()),
+    MaterialColor(0xffd08a6f, Map<int, Color>()),
+//    MaterialColor(0xffd08870, Map<int, Color>()),
+    MaterialColor(0xff9f614a, Map<int, Color>()),
+    MaterialColor(0xff6a4c48, Map<int, Color>()),
+    MaterialColor(0xff3a3c37, Map<int, Color>())];
+
 
   void initState() {
     super.initState();

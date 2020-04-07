@@ -10,18 +10,22 @@ import 'dart:convert';
 
 import 'commercial_device.dart';
 
+import 'dart:core';
+
 part 'survey.g.dart';
 
 
 
+
+
 enum Sex{
-  undefinied,
+  undefined,
   male,
   female,
 }
 
 enum Ethnicity{
-  undefinied,
+  undefined,
   white,
   black,
   latino,
@@ -29,7 +33,7 @@ enum Ethnicity{
 }
 
 enum Health{
-  undefinied,
+  undefined,
   healthy,
   recovering,
   sick,
@@ -64,10 +68,16 @@ class SurveyDataExport{
 
   CommercialDevice commercialDevice;
 
+  DateTime start_time_of_recording;
+
 
   List<double> accelerometerValues = List<double>();
   List<double> userAccelerometerValues = List<double>();
   List<double> gyroscopeValues = List<double>();
+
+  List<DateTime> accelerometerTimestamps = List<DateTime>();
+  List<DateTime> gyroscopeTimestamps = List<DateTime>();
+  List<DateTime> userAccelerometerTimestamps = List<DateTime>();
 
   double o2_gt;
   double hr_gt;
@@ -78,9 +88,11 @@ class SurveyDataExport{
   File _user_file;
   String _user_file_path;
 
-  Sex sex = Sex.undefinied;
-  Ethnicity ethnicity = Ethnicity.undefinied;
-  Health health = Health.undefinied;
+  Sex sex = Sex.undefined;
+//  @deprecated
+//  Ethnicity ethnicity = Ethnicity.undefinied;
+  int skin_color;
+  Health health = Health.undefined;
 
   String phone_brand;
   String phone_reference;
@@ -214,9 +226,10 @@ class SurveyDataExport{
     _user_file = null;
     _user_file_path = null;
 
-    sex = Sex.undefinied;
-    ethnicity = Ethnicity.undefinied;
-    health = Health.undefinied;
+    sex = Sex.undefined;
+//    ethnicity = Ethnicity.undefinied;
+    health = Health.undefined;
+    skin_color = null;
 
   }
 
@@ -224,6 +237,9 @@ class SurveyDataExport{
     accelerometerValues.clear();
     gyroscopeValues.clear();
     userAccelerometerValues.clear();
+    accelerometerTimestamps.clear();
+    userAccelerometerTimestamps.clear();
+    gyroscopeTimestamps.clear();
   }
 
 }

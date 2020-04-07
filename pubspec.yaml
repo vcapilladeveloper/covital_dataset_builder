@@ -57,6 +57,7 @@ dependencies:
   community_material_icon:
   flutter_sliding_tutorial:
   flutter_svg:
+  flutter_material_color_picker:
 
 
 dev_dependencies:

@@ -328,6 +328,9 @@ class _HomeState extends State<Home> {
         survey.accelerometerValues.add(event.x);
         survey.accelerometerValues.add(event.y);
         survey.accelerometerValues.add(event.z);
+
+        survey.accelerometerTimestamps.add(DateTime.now());
+
       });
     }));
     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
@@ -335,6 +338,7 @@ class _HomeState extends State<Home> {
         survey.gyroscopeValues.add(event.x);
         survey.gyroscopeValues.add(event.y);
         survey.gyroscopeValues.add(event.z);
+        survey.gyroscopeTimestamps.add(DateTime.now());
       });
     }));
     _streamSubscriptions
@@ -343,6 +347,7 @@ class _HomeState extends State<Home> {
         survey.userAccelerometerValues.add(event.x);
         survey.userAccelerometerValues.add(event.y);
         survey.userAccelerometerValues.add(event.z);
+        survey.userAccelerometerTimestamps.add(DateTime.now());
       });
     }));
 
@@ -371,6 +376,9 @@ class _HomeState extends State<Home> {
     try {
       survey.video_file = filePath;
       controller.flash(true);
+
+      survey.start_time_of_recording = DateTime.now();
+
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
       _showCameraException(e);
@@ -402,6 +410,7 @@ class _HomeState extends State<Home> {
           arguments: survey,
         );
       } else {
+        survey.start_time_of_recording = null;
         survey.clearSensorData();
       }
     });
