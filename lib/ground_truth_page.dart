@@ -77,7 +77,7 @@ class _GroundTruthState extends State<GroundTruth> {
         .settings
         .arguments;
 
-    survey.commercialDevice = UserDataContainer
+    survey.spo2Device = UserDataContainer
         .of(context)
         .data
         .commercial_device;
@@ -86,7 +86,7 @@ class _GroundTruthState extends State<GroundTruth> {
         .of(context)
         .data
         .commercial_device != null);
-    assert(survey.commercialDevice != null);
+    assert(survey.spo2Device != null);
 
     _controller = VideoPlayerController.file(File(survey.video_file))
       ..initialize().then((_) {
@@ -174,7 +174,7 @@ class _GroundTruthState extends State<GroundTruth> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
-        Text("Phone: " + survey.phone_brand + " " + survey.phone_reference),
+        Text("Phone: " + survey.phoneBrand + " " + survey.phoneModel),
 //        Text(survey.phone_reference),
 //        Text(survey.deviceData['model'])
       ],
@@ -216,7 +216,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.o2_gt = double.parse(s);
+                          survey.o2gt = double.parse(s);
                         });
                       });
                     },
@@ -224,7 +224,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.o2_gt = double.parse(s);
+                          survey.o2gt = double.parse(s);
                         });
                       });
                     },
@@ -242,7 +242,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.hr_gt = double.parse(s);
+                          survey.hrgt = double.parse(s);
                         });
                       });
                     },
@@ -250,7 +250,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.hr_gt = double.parse(s);
+                          survey.hrgt = double.parse(s);
                         });
                       });
                     },
@@ -352,7 +352,7 @@ class _GroundTruthState extends State<GroundTruth> {
                     },
                     child: const Text('Select skin color'),
                   ),
-                        survey.skin_color == null ? Text("None") : CircleColor(color: Color(survey.skin_color), circleSize: 35,),
+                        survey.skinColor == null ? Text("None") : CircleColor(color: Color(survey.skinColor), circleSize: 35,),
                   ]),
 
 
@@ -370,7 +370,7 @@ class _GroundTruthState extends State<GroundTruth> {
           onMainColorChange: (Color color) {
             // Handle color changes
             setState(() {
-              survey.skin_color = color.value;
+              survey.skinColor = color.value;
               print("updated skin color: " + color.value.toString());
             });
           },
@@ -551,8 +551,8 @@ class _GroundTruthState extends State<GroundTruth> {
                   ),
                   Divider(),
                   TextFormField(
-                    initialValue: settings.reference_number == null ? "" : settings.reference_number,
-                    keyboardType: TextInputType.number,
+                    initialValue: settings.model == null ? "" : settings.model,
+//                    keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         prefixIcon: Icon(Icons.input),
@@ -563,7 +563,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          settings.reference_number = s;
+                          settings.model = s;
                           settings.save();
                         });
                       });

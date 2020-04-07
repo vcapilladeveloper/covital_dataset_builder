@@ -9,13 +9,12 @@ part of 'survey.dart';
 SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
   return SurveyDataExport()
     ..id = json['id'] as String
-    ..commercialDevice = json['commercialDevice'] == null
+    ..spo2Device = json['spo2Device'] == null
         ? null
-        : CommercialDevice.fromJson(
-            json['commercialDevice'] as Map<String, dynamic>)
-    ..start_time_of_recording = json['start_time_of_recording'] == null
+        : CommercialDevice.fromJson(json['spo2Device'] as Map<String, dynamic>)
+    ..startTimeOfRecording = json['startTimeOfRecording'] == null
         ? null
-        : DateTime.parse(json['start_time_of_recording'] as String)
+        : DateTime.parse(json['startTimeOfRecording'] as String)
     ..accelerometerValues = (json['accelerometerValues'] as List)
         ?.map((e) => (e as num)?.toDouble())
         ?.toList()
@@ -35,23 +34,22 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
         (json['userAccelerometerTimestamps'] as List)
             ?.map((e) => e == null ? null : DateTime.parse(e as String))
             ?.toList()
-    ..o2_gt = (json['o2_gt'] as num)?.toDouble()
-    ..hr_gt = (json['hr_gt'] as num)?.toDouble()
+    ..o2gt = (json['o2gt'] as num)?.toDouble()
+    ..hrgt = (json['hrgt'] as num)?.toDouble()
     ..age = json['age'] as int
     ..weight = (json['weight'] as num)?.toDouble()
     ..sex = _$enumDecodeNullable(_$SexEnumMap, json['sex'])
-    ..skin_color = json['skin_color'] as int
+    ..skinColor = json['skinColor'] as int
     ..health = _$enumDecodeNullable(_$HealthEnumMap, json['health'])
-    ..phone_brand = json['phone_brand'] as String
-    ..phone_reference = json['phone_reference'] as String;
+    ..phoneBrand = json['phoneBrand'] as String
+    ..phoneModel = json['phoneModel'] as String;
 }
 
 Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'commercialDevice': instance.commercialDevice,
-      'start_time_of_recording':
-          instance.start_time_of_recording?.toIso8601String(),
+      'spo2Device': instance.spo2Device,
+      'startTimeOfRecording': instance.startTimeOfRecording?.toIso8601String(),
       'accelerometerValues': instance.accelerometerValues,
       'userAccelerometerValues': instance.userAccelerometerValues,
       'gyroscopeValues': instance.gyroscopeValues,
@@ -64,15 +62,15 @@ Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
       'userAccelerometerTimestamps': instance.userAccelerometerTimestamps
           ?.map((e) => e?.toIso8601String())
           ?.toList(),
-      'o2_gt': instance.o2_gt,
-      'hr_gt': instance.hr_gt,
+      'o2gt': instance.o2gt,
+      'hrgt': instance.hrgt,
       'age': instance.age,
       'weight': instance.weight,
       'sex': _$SexEnumMap[instance.sex],
-      'skin_color': instance.skin_color,
+      'skinColor': instance.skinColor,
       'health': _$HealthEnumMap[instance.health],
-      'phone_brand': instance.phone_brand,
-      'phone_reference': instance.phone_reference,
+      'phoneBrand': instance.phoneBrand,
+      'phoneModel': instance.phoneModel,
     };
 
 T _$enumDecode<T>(

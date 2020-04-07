@@ -66,9 +66,9 @@ class SurveyDataExport{
 
   String id;
 
-  CommercialDevice commercialDevice;
+  CommercialDevice spo2Device;
 
-  DateTime start_time_of_recording;
+  DateTime startTimeOfRecording;
 
 
   List<double> accelerometerValues = List<double>();
@@ -79,8 +79,8 @@ class SurveyDataExport{
   List<DateTime> gyroscopeTimestamps = List<DateTime>();
   List<DateTime> userAccelerometerTimestamps = List<DateTime>();
 
-  double o2_gt;
-  double hr_gt;
+  double o2gt;
+  double hrgt;
 
   int age;
   double weight;
@@ -91,11 +91,11 @@ class SurveyDataExport{
   Sex sex = Sex.undefined;
 //  @deprecated
 //  Ethnicity ethnicity = Ethnicity.undefinied;
-  int skin_color;
+  int skinColor;
   Health health = Health.undefined;
 
-  String phone_brand;
-  String phone_reference;
+  String phoneBrand;
+  String phoneModel;
 
   Map<String, dynamic> _deviceData;
 
@@ -119,12 +119,12 @@ class SurveyDataExport{
     try {
       if (Platform.isAndroid) {
         _deviceData = _readAndroidBuildData(await deviceInfoPlugin.androidInfo);
-        phone_brand = _deviceData['brand'];
-        phone_reference = _deviceData['model'];
+        phoneBrand = _deviceData['brand'];
+        phoneModel = _deviceData['model'];
       } else if (Platform.isIOS) {
         _deviceData = _readIosDeviceInfo(await deviceInfoPlugin.iosInfo);
-        phone_reference = _deviceData['model'];
-        phone_brand = "iPhone";
+        phoneModel = _deviceData['model'];
+        phoneBrand = "iPhone";
       }
     } on PlatformException {
       _deviceData = <String, dynamic>{
@@ -217,8 +217,8 @@ class SurveyDataExport{
 
   void clear(){
     clearSensorData();
-    o2_gt = null;
-    hr_gt = null;
+    o2gt = null;
+    hrgt = null;
 
     age = null;
     weight = null;
@@ -229,7 +229,7 @@ class SurveyDataExport{
     sex = Sex.undefined;
 //    ethnicity = Ethnicity.undefinied;
     health = Health.undefined;
-    skin_color = null;
+    skinColor = null;
 
   }
 

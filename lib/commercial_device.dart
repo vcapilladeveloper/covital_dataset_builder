@@ -25,7 +25,7 @@ class CommercialDevice extends HiveObject{
   @HiveField(0)
   String brand;
   @HiveField(1)
-  String reference_number;
+  String model;
 
   CommercialDevice();
 

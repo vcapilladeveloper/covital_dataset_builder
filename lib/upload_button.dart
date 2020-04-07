@@ -300,7 +300,7 @@ class _UploadButtonState extends State<UploadButton> {
   }
 
   void onPressedSendButton() {
-    if (widget.survey.o2_gt == null || widget.survey.hr_gt == null) {
+    if (widget.survey.o2gt == null || widget.survey.hrgt == null) {
       print("need gt data");
       Fluttertoast.showToast(
           msg: "please input data ground truth data for SpO2 and HR",
@@ -310,9 +310,9 @@ class _UploadButtonState extends State<UploadButton> {
           backgroundColor: Theme.of(context).accentColor,
           textColor: Colors.white,
           fontSize: 16.0);
-    } else if (widget.survey.o2_gt > 100 ||
-        widget.survey.o2_gt < 0 ||
-        widget.survey.hr_gt < 0) {
+    } else if (widget.survey.o2gt > 100 ||
+        widget.survey.o2gt < 0 ||
+        widget.survey.hrgt < 0) {
       print("need gt data");
       Fluttertoast.showToast(
           msg: "please input valid data ground truth data for SpO2 and HR",

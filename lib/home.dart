@@ -377,7 +377,7 @@ class _HomeState extends State<Home> {
       survey.video_file = filePath;
       controller.flash(true);
 
-      survey.start_time_of_recording = DateTime.now();
+      survey.startTimeOfRecording = DateTime.now();
 
       await controller.startVideoRecording(filePath);
     } on CameraException catch (e) {
@@ -410,7 +410,7 @@ class _HomeState extends State<Home> {
           arguments: survey,
         );
       } else {
-        survey.start_time_of_recording = null;
+        survey.startTimeOfRecording = null;
         survey.clearSensorData();
       }
     });

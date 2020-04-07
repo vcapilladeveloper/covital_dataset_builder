@@ -18,7 +18,7 @@ class CommercialDeviceAdapter extends TypeAdapter<CommercialDevice> {
     };
     return CommercialDevice()
       ..brand = fields[0] as String
-      ..reference_number = fields[1] as String;
+      ..model = fields[1] as String;
   }
 
   @override
@@ -28,7 +28,7 @@ class CommercialDeviceAdapter extends TypeAdapter<CommercialDevice> {
       ..writeByte(0)
       ..write(obj.brand)
       ..writeByte(1)
-      ..write(obj.reference_number);
+      ..write(obj.model);
   }
 }
 
@@ -39,11 +39,11 @@ class CommercialDeviceAdapter extends TypeAdapter<CommercialDevice> {
 CommercialDevice _$CommercialDeviceFromJson(Map<String, dynamic> json) {
   return CommercialDevice()
     ..brand = json['brand'] as String
-    ..reference_number = json['reference_number'] as String;
+    ..model = json['model'] as String;
 }
 
 Map<String, dynamic> _$CommercialDeviceToJson(CommercialDevice instance) =>
     <String, dynamic>{
       'brand': instance.brand,
-      'reference_number': instance.reference_number,
+      'model': instance.model,
     };
