@@ -80,8 +80,9 @@ class _HomeState extends State<Home> {
         appBar: AppBar(
           title: Text("CoVital - Data collection"),
         ),
-        body: new Column(
-          children: <Widget>[
+        body: SafeArea(
+          child: new Column(
+            children: <Widget>[
 //          ListTile(title: Text("Home"),
 //          subtitle: Text("Data collection")),
 
@@ -93,47 +94,48 @@ class _HomeState extends State<Home> {
 //            ],
 //          ),
 
-            Expanded(
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(1.0),
-                  child: Center(
-                    child: _cameraPreviewWidget(),
+                Expanded(
+                  child: Container(
+                    child: Padding(
+                      padding: const EdgeInsets.all(1.0),
+                      child: Center(
+                        child: _cameraPreviewWidget(),
+                      ),
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black,
+                      border: Border.all(
+                        color:
+                            controller != null && controller.value.isRecordingVideo
+                                ? Colors.redAccent
+                                : Colors.grey,
+                        width: 3.0,
+                      ),
+                    ),
                   ),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(
-                    color:
-                        controller != null && controller.value.isRecordingVideo
-                            ? Colors.redAccent
-                            : Colors.grey,
-                    width: 3.0,
-                  ),
+
+                _cameraTogglesRowWidget(),
+
+                Row(
+                  children: <Widget>[
+                    record_button(),
+                    init_process == false
+                        ? Container()
+                        : Text(_loading_recording_process
+                            ? "Get ready. Recording will start in " +
+                                _time_left.inSeconds.toString() +
+                                "s"
+                            : "Recording done in " +
+                                _time_left.inSeconds.toString() +
+                                "s")
+                  ],
                 ),
-              ),
-            ),
-
-            _cameraTogglesRowWidget(),
-
-            Row(
-              children: <Widget>[
-                record_button(),
-                init_process == false
-                    ? Container()
-                    : Text(_loading_recording_process
-                        ? "Get ready. Recording will start in " +
-                            _time_left.inSeconds.toString() +
-                            "s"
-                        : "Recording done in " +
-                            _time_left.inSeconds.toString() +
-                            "s")
               ],
             ),
-          ],
         ),
 
-    drawer: DrawerOnly(),
+      drawer: DrawerOnly(),
 
     );
   }
