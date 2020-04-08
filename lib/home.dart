@@ -49,8 +49,8 @@ class _HomeState extends State<Home> {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 3;
-  int time_before_recording_in_sec = 1;
+  int time_recording_in_sec = 30;
+  int time_before_recording_in_sec = 10;
   bool _loading_recording_process = false;
 
   @override

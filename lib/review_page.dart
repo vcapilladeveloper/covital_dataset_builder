@@ -85,7 +85,7 @@ class _ReviewPageState extends State<ReviewPage> {
       appBar: AppBar(
         title: Text("4 of 4: review"),
       ),
-      body: all(),
+      body: init_app ? all() : CircularProgressIndicator(),
 //      floatingActionButton: init_app
 //          ? FloatingActionButton(
 //              onPressed: onPressedSendButton,
@@ -224,6 +224,8 @@ class _ReviewPageState extends State<ReviewPage> {
                           Text("Sex"),
                           SizedBox(height: 10,),
                           Text("Height"),
+                          SizedBox(height: 10,),
+                          Text("Health"),
                         ])),
                 Expanded(
                     child:Column(
@@ -233,6 +235,8 @@ class _ReviewPageState extends State<ReviewPage> {
                           Text(survey.sex.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
                           SizedBox(height: 10,),
                           Text(survey.height.toString() + " cm", style: TextStyle(fontWeight: FontWeight.bold),),
+                          SizedBox(height: 10,),
+                          Text(survey.health.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
 
 
                         ])),
