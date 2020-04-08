@@ -357,7 +357,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
                     //                  labelext: 'Frequency of capture (s)'
                     ),
                 onChanged: (String s) {
-                  print("Submitted: " + s);
+                  print("Submitted: " + double.parse(s).toString());
                   setState(() {
                     setState(() {
                       survey.height = double.parse(s);

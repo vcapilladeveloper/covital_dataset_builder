@@ -232,7 +232,7 @@ class _ReviewPageState extends State<ReviewPage> {
                         children: <Widget>[
                           Text(survey.sex.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
                           SizedBox(height: 10,),
-                          Text(survey.height.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
+                          Text(survey.height.toString() + " cm", style: TextStyle(fontWeight: FontWeight.bold),),
 
 
                         ])),
@@ -256,7 +256,7 @@ class _ReviewPageState extends State<ReviewPage> {
 
                           Text(survey.age.toString() + " years", style: TextStyle(fontWeight: FontWeight.bold),),
                           SizedBox(height: 10,),
-                          Text(survey.height.toString() + " cm", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text(survey.weight.toString() + " kg", style: TextStyle(fontWeight: FontWeight.bold),)
 
                         ])),
 //                Row(
