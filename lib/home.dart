@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'DrawerOnly.dart';
 import 'package:flutter/material.dart';
-import 'InitCamera.dart';
+import 'O2process/InitCamera.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter/scheduler.dart';
 import 'user_data_container.dart';
@@ -13,7 +13,7 @@ import 'package:countdown/countdown.dart';
 
 import 'package:video_player/video_player.dart';
 
-import 'survey.dart';
+import 'survey_lib/survey.dart';
 import 'package:sensors/sensors.dart';
 
 class Home extends StatefulWidget {
@@ -22,7 +22,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Survey survey = Survey();
+  Survey survey;
 
 //  List<double> _accelerometerValues;
 //  List<double> _userAccelerometerValues;
@@ -32,8 +32,6 @@ class _HomeState extends State<Home> {
 
   VoidCallback videoPlayerListener;
   VideoPlayerController videoController;
-
-
 
   Timer _timer_stop_recording;
 
@@ -51,8 +49,8 @@ class _HomeState extends State<Home> {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 30;
-  int time_before_recording_in_sec = 10;
+  int time_recording_in_sec = 3;
+  int time_before_recording_in_sec = 1;
   bool _loading_recording_process = false;
 
   @override
@@ -66,10 +64,10 @@ class _HomeState extends State<Home> {
 
   @protected
   Future runInitTasks() async {
+    survey = UserDataContainer.of(context).data.current_survey;
     var cameras = UserDataContainer.of(context).data.cameras;
 
     onNewCameraSelected(cameras[0]);
-
   }
 
   @override
@@ -78,14 +76,28 @@ class _HomeState extends State<Home> {
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
 
+    List<Widget> column;
+    Widget bottom_button;
+
+    if (init_process == false) {
+      column = generate_widgets_init();
+      bottom_button = start_recording_button();
+    } else if (_loading_recording_process == true) {
+      column = generate_widgets_getting_ready();
+      bottom_button = stop_recording_button();
+    } else {
+      column = generate_widgets_recording();
+      bottom_button = stop_recording_button();
+    }
+
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          title: Text("CoVital - Data collection"),
-        ),
-        body: SafeArea(
-          child: new Column(
-            children: <Widget>[
+      key: _scaffoldKey,
+      appBar: AppBar(
+        title: Text("1 of 4: Data collection"),
+      ),
+      body: SafeArea(
+        child: new Column(
+          children: column,
 //          ListTile(title: Text("Home"),
 //          subtitle: Text("Data collection")),
 
@@ -97,116 +109,323 @@ class _HomeState extends State<Home> {
 //            ],
 //          ),
 
-                Expanded(
-                  child: Container(
-                    child: Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: Center(
-                        child: _cameraPreviewWidget(),
-                      ),
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      border: Border.all(
-                        color:
-                            controller != null && controller.value.isRecordingVideo
-                                ? Colors.redAccent
-                                : Colors.grey,
-                        width: 3.0,
-                      ),
-                    ),
-                  ),
-                ),
+//                Expanded(
+//                  child: Container(
+//                    child: Padding(
+//                      padding: const EdgeInsets.all(1.0),
+//                      child: Center(
+//                        child: _cameraPreviewWidget(),
+//                      ),
+//                    ),
+//                    decoration: BoxDecoration(
+//                      color: Colors.black,
+//                      border: Border.all(
+//                        color:
+//                            controller != null && controller.value.isRecordingVideo
+//                                ? Colors.redAccent
+//                                : Colors.grey,
+//                        width: 3.0,
+//                      ),
+//                    ),
+//                  ),
+//                ),
 
-                _cameraTogglesRowWidget(),
+//                _cameraTogglesRowWidget(),
 
-                Row(
-                  children: <Widget>[
-                    record_button(),
-                    init_process == false
-                        ? Container()
-                        : Text(_loading_recording_process
-                            ? "Get ready. Recording will start in " +
-                                _time_left.inSeconds.toString() +
-                                "s"
-                            : "Recording done in " +
-                                _time_left.inSeconds.toString() +
-                                "s")
-                  ],
-                ),
-              ],
-            ),
+//            Row(
+//              children: <Widget>[
+//                record_button(),
+//                init_process == false
+//                    ? Container()
+//                    : Text(_loading_recording_process
+//                    ? "Get ready. Recording will start in " +
+//                    _time_left.inSeconds.toString() +
+//                    "s"
+//                    : "Recording done in " +
+//                    _time_left.inSeconds.toString() +
+//                    "s")
+//              ],
+//            ),
+
+//              ],
         ),
-
+      ),
       drawer: DrawerOnly(),
-
+      bottomNavigationBar: bottom_button,
     );
   }
 
-  Widget record_button() {
-    return init_process == false
-        ? FlatButton(
-            child: Text("Start recording"),
-            onPressed: () {
-              print("start to record");
-              _loading_recording_process = true;
-              _time_left = Duration(seconds: time_before_recording_in_sec);
-              setState(() {
-                controller.flash(true);
-                init_process = true;
-              });
+  List<Widget> generate_widgets_init() {
+    List<Widget> ret = List<Widget>();
 
-              _cd = CountDown(Duration(seconds: time_before_recording_in_sec));
-              _sub_cd = _cd.stream.listen(null);
-              // start your countdown by registering a listener
-              _sub_cd.onData((Duration d) {
+    ret.add(ListTile(
+      title: Text("Cover camera pad with finger."),
+      subtitle: Text(""),
+    ));
+
+    ret.add(Expanded(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: Center(
+            child: _cameraPreviewWidget(),
+          ),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(
+            color: Colors.grey,
+            width: 3.0,
+          ),
+        ),
+      ),
+    ));
+
+//    ret.add(_cameraTogglesRowWidget());
+
+//    ret.add(Row(
+//      children: <Widget>[
+//        record_button(),
+//        init_process == false
+//            ? Container()
+//            : Text(_loading_recording_process
+//            ? "Get ready. Recording will start in " +
+//            _time_left.inSeconds.toString() +
+//            "s"
+//            : "Recording done in " +
+//            _time_left.inSeconds.toString() +
+//            "s")
+//      ],
+//    )
+//    );
+
+//    ret.add(start_recording_button());
+
+    return ret;
+  }
+
+  List<Widget> generate_widgets_getting_ready() {
+    List<Widget> ret = List<Widget>();
+
+    ret.add(ListTile(
+      title: Text("Cover camera pad with finger."),
+      subtitle: Text("Starting in " + _time_left.inSeconds.toString() + "s"),
+    ));
+
+    ret.add(Expanded(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: Center(
+            child: _cameraPreviewWidget(),
+          ),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(
+            color: controller != null && controller.value.isRecordingVideo
+                ? Colors.redAccent
+                : Colors.grey,
+            width: 3.0,
+          ),
+        ),
+      ),
+    ));
+
+//    ret.add(_cameraTogglesRowWidget());
+
+//    ret.add(stop_recording_button());
+
+    return ret;
+  }
+
+  List<Widget> generate_widgets_recording() {
+    List<Widget> ret = List<Widget>();
+
+    ret.add(ListTile(
+      title: Text("Stay still."),
+      subtitle: Text("Measuring: " + _time_left.inSeconds.toString() + "s"),
+    ));
+
+    ret.add(Expanded(
+      child: Container(
+        child: Padding(
+          padding: const EdgeInsets.all(1.0),
+          child: Center(
+            child: _cameraPreviewWidget(),
+          ),
+        ),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          border: Border.all(
+            color: controller != null && controller.value.isRecordingVideo
+                ? Colors.redAccent
+                : Colors.grey,
+            width: 3.0,
+          ),
+        ),
+      ),
+    ));
+
+//    ret.add(_cameraTogglesRowWidget());
+
+//    ret.add(stop_recording_button());
+
+    return ret;
+  }
+
+  Widget start_recording_button() {
+    return Padding(
+        padding: EdgeInsets.only(left: 10, right: 10),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+                child: RaisedButton(
+              child: Text(
+                "Start measurement",
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.title.color),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                _loading_recording_process = true;
+                _time_left = Duration(seconds: time_before_recording_in_sec);
                 setState(() {
-                  _time_left = d;
+                  controller.flash(true);
+                  init_process = true;
                 });
-              });
 
-              // when it finish the onDone cb is called
-              _sub_cd.onDone(() {
-                _loading_recording_process = false;
-                onStartVideoRecording();
-
-                _cd_recording =
-                    CountDown(Duration(seconds: time_recording_in_sec));
-                _sub_cd_recording = _cd_recording.stream.listen(null);
-                _sub_cd_recording.onData((Duration d) {
+                _cd =
+                    CountDown(Duration(seconds: time_before_recording_in_sec));
+                _sub_cd = _cd.stream.listen(null);
+                // start your countdown by registering a listener
+                _sub_cd.onData((Duration d) {
                   setState(() {
                     _time_left = d;
                   });
                 });
 
-                _timer_stop_recording = Timer(Duration(seconds: time_recording_in_sec), () {
-                  print("Stopping the recording");
-                  onStopRecording();
-                });
-              });
-            },
-          )
-        : FlatButton(
-            child: Text("Cancel"),
-            onPressed: () {
-              print("stop to record");
-              setState(() {
-                _loading_recording_process = false;
-                controller.flash(false);
-                init_process = false;
-                _sub_cd?.cancel();
-                _timer_stop_recording?.cancel();
+                // when it finish the onDone cb is called
+                _sub_cd.onDone(() {
+                  _loading_recording_process = false;
+                  onStartVideoRecording();
 
-                _sub_cd_recording?.cancel();
-                onStopRecording(was_cancelled: true);
-              });
-            },
-          );
+                  _cd_recording =
+                      CountDown(Duration(seconds: time_recording_in_sec));
+                  _sub_cd_recording = _cd_recording.stream.listen(null);
+                  _sub_cd_recording.onData((Duration d) {
+                    setState(() {
+                      _time_left = d;
+                    });
+                  });
+
+                  _timer_stop_recording =
+                      Timer(Duration(seconds: time_recording_in_sec), () {
+                    print("Stopping the recording");
+                    onStopRecording();
+                  });
+                });
+              },
+            ))
+          ],
+        ));
   }
 
-//  void start_recording(){
-//    print("Start recording for 30 sec");
+  Widget stop_recording_button() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: Row(
+        children: <Widget>[
+      Expanded(
+      child:RaisedButton(
+      child: Text(
+        "Cancel",
+        style: TextStyle(color: Theme.of(context).primaryTextTheme.title.color),
+      ),
+      color: Theme.of(context).accentColor,
+      onPressed: () {
+        print("stop to record");
+        setState(() {
+          _loading_recording_process = false;
+          controller.flash(false);
+          init_process = false;
+          _sub_cd?.cancel();
+          _timer_stop_recording?.cancel();
+
+          _sub_cd_recording?.cancel();
+          onStopRecording(was_cancelled: true);
+        });
+      },
+    ))
+        ],
+      ));
+  }
+
+//  Widget record_button() {
+//    return init_process == false
+//        ? FlatButton(
+//            child: Text("Start recording"),
+//            onPressed: () {
+//              print("start to record");
+//              _loading_recording_process = true;
+//              _time_left = Duration(seconds: time_before_recording_in_sec);
+//              setState(() {
+//                controller.flash(true);
+//                init_process = true;
+//              });
+//
+//              _cd = CountDown(Duration(seconds: time_before_recording_in_sec));
+//              _sub_cd = _cd.stream.listen(null);
+//              // start your countdown by registering a listener
+//              _sub_cd.onData((Duration d) {
+//                setState(() {
+//                  _time_left = d;
+//                });
+//              });
+//
+//              // when it finish the onDone cb is called
+//              _sub_cd.onDone(() {
+//                _loading_recording_process = false;
+//                onStartVideoRecording();
+//
+//                _cd_recording =
+//                    CountDown(Duration(seconds: time_recording_in_sec));
+//                _sub_cd_recording = _cd_recording.stream.listen(null);
+//                _sub_cd_recording.onData((Duration d) {
+//                  setState(() {
+//                    _time_left = d;
+//                  });
+//                });
+//
+//                _timer_stop_recording =
+//                    Timer(Duration(seconds: time_recording_in_sec), () {
+//                  print("Stopping the recording");
+//                  onStopRecording();
+//                });
+//              });
+//            },
+//          )
+//        : FlatButton(
+//            child: Text("Cancel"),
+//            onPressed: () {
+//              print("stop to record");
+//              setState(() {
+//                _loading_recording_process = false;
+//                controller.flash(false);
+//                init_process = false;
+//                _sub_cd?.cancel();
+//                _timer_stop_recording?.cancel();
+//
+//                _sub_cd_recording?.cancel();
+//                onStopRecording(was_cancelled: true);
+//              });
+//            },
+//          );
 //  }
+//
+////  void start_recording(){
+////    print("Start recording for 30 sec");
+////  }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
@@ -332,7 +551,6 @@ class _HomeState extends State<Home> {
         survey.accelerometerValues.add(event.z);
 
         survey.accelerometerTimestamps.add(DateTime.now());
-
       });
     }));
     _streamSubscriptions.add(gyroscopeEvents.listen((GyroscopeEvent event) {
@@ -409,7 +627,7 @@ class _HomeState extends State<Home> {
       if (was_cancelled == false) {
         Navigator.of(context).pushNamed(
           '/gtpage',
-          arguments: survey,
+//          arguments: survey,
         );
       } else {
         survey.startTimeOfRecording = null;

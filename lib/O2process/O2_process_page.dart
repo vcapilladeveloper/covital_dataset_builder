@@ -1,7 +1,7 @@
-import 'package:covital_dataset_builder/O2process.dart';
+import 'package:covital_dataset_builder/O2process/O2process.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'user_data_container.dart';
+import '../user_data_container.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:flutter_ffmpeg/flutter_ffmpeg.dart';

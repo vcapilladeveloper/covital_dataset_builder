@@ -1,12 +1,15 @@
-import 'record.dart';
 import 'package:flutter/material.dart';
 import 'user_data_container.dart';
 import 'package:flutter/scheduler.dart';
-import 'O2_process_page.dart';
-import 'package:covital_dataset_builder/InitCamera.dart';
+import 'O2process/O2_process_page.dart';
 import 'home.dart';
 import 'ground_truth_page.dart';
 import 'device_specs_page.dart';
+import 'tutorial.dart';
+import 'patient_information_page.dart';
+import 'medical_history_page.dart';
+import 'review_page.dart';
+import 'thank_you_page.dart';
 
 void main() => runApp(new MyApp());
 
@@ -20,8 +23,13 @@ class MyApp extends StatelessWidget {
             // When navigating to the "/" route, build the FirstScreen widget.
             '/home': (context) => Home(),
             '/video': (context) => O2ProcessPage(),
-            '/gtpage': (context) => GroundTruth(),
+            '/gtpage': (context) => GroundTruthPage(),
             '/specs' : (context) => DeviceSpecsScreen(),
+            '/tutorial': (context) => ExamplePage(),
+            '/patient_information': (context) => PatientInformationPage(),
+            '/medical_history': (context) => MedicalHistoryPage(),
+            '/review_page': (context) => ReviewPage(),
+            '/thank_you': (context) => ThankYouPage(),
 //             When navigating to the "/second" route, build the SecondScreen widget.
 //            '/lifelapse_edit_page': (context) => TimeLapsePage(),
           },
@@ -67,7 +75,7 @@ class _LoadingScreenState extends State<LoadingScreen>{
 //    }
 //    else {
       print("Going to home");
-      Navigator.of(context).pushReplacementNamed('/home');
+      Navigator.of(context).pushReplacementNamed('/tutorial');
 //    }
   }
 

@@ -10,10 +10,9 @@ import 'package:openapi/api.dart' as upload_api;
 
 import 'package:flutter_uploader/flutter_uploader.dart';
 
-import 'survey.dart';
+import 'survey_lib/survey.dart';
 
 enum MediaType { Image, Video }
-
 
 class FileToSend {
   upload_api.SignedUploadFiles file = upload_api.SignedUploadFiles();
@@ -59,8 +58,6 @@ class FileToSend {
   }
 }
 
-
-
 class UploadItem {
   final String id;
   final String tag;
@@ -85,14 +82,16 @@ class UploadItem {
 
   bool isCompleted() =>
       this.status == UploadTaskStatus.canceled ||
-          this.status == UploadTaskStatus.complete ||
-          this.status == UploadTaskStatus.failed;
+      this.status == UploadTaskStatus.complete ||
+      this.status == UploadTaskStatus.failed;
 }
 
 class UploadButton extends StatefulWidget {
   Survey survey;
+  final ValueChanged<double> updateProgress;
+  final ValueChanged<bool> isUploading;
 
-  UploadButton({Key key, this.survey}) : super(key: key);
+  UploadButton({Key key, this.survey, this.updateProgress, this.isUploading}) : super(key: key);
 
   @override
   _UploadButtonState createState() => _UploadButtonState();
@@ -104,13 +103,13 @@ class _UploadButtonState extends State<UploadButton> {
   StreamSubscription _resultSubscription;
   Map<String, UploadItem> _tasks = {};
 
-
   bool _started_upload = false;
   bool is_done_uploading_video = false;
   bool is_done_uploading_userdata = false;
   var api_instance = upload_api.DefaultApi();
 
   double progress_value = 0;
+
 
   @override
   void initState() {
@@ -119,7 +118,8 @@ class _UploadButtonState extends State<UploadButton> {
     _progressSubscription = uploader.progress.listen((progress) {
       final task = _tasks[progress.tag];
       print("progress: ${progress.progress} , tag: ${progress.tag}");
-      if (progress.tag == "video"){
+      if (progress.tag == "video") {
+        widget.updateProgress(progress_value);
         setState(() {
           progress_value = progress.progress.toDouble() / 100;
         });
@@ -136,18 +136,21 @@ class _UploadButtonState extends State<UploadButton> {
         return;
       }
 
-      print(is_done_uploading_video.toString() + " and " + is_done_uploading_userdata.toString() + " " + _started_upload.toString());
+      print(is_done_uploading_video.toString() +
+          " and " +
+          is_done_uploading_userdata.toString() +
+          " " +
+          _started_upload.toString());
       setState(() {
         print("Changing task");
         _tasks[result.tag] = task.copyWith(status: result.status);
 
-        if(result.tag == "video"){
+        if (result.tag == "video") {
           is_done_uploading_video = true;
-        }
-        else if (result.tag == "userfile"){
+        } else if (result.tag == "userfile") {
           is_done_uploading_userdata = true;
         }
-        if(is_done_uploading_video && is_done_uploading_userdata){
+        if (is_done_uploading_video && is_done_uploading_userdata) {
           _started_upload = false;
           is_done_uploading_video = false;
           is_done_uploading_userdata = false;
@@ -155,10 +158,10 @@ class _UploadButtonState extends State<UploadButton> {
 
           widget.survey.clear();
 
-          Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil(
+              "/thank_you", (Route<dynamic> route) => false);
         }
       });
-
     }, onError: (ex, stacktrace) {
       print("exception: $ex");
       print("stacktrace: $stacktrace" ?? "no stacktrace");
@@ -179,48 +182,58 @@ class _UploadButtonState extends State<UploadButton> {
     _resultSubscription?.cancel();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    var w = List<Widget>();
+//    var w = List<Widget>();
+//
+//    if (_started_upload == true) {
+//      w.add(LinearProgressIndicator(
+//        value: progress_value,
+//      ));
+//    }
 
+//    w.add(
+      return Padding(
+          padding: EdgeInsets.only(left: 10, right: 10),
+          child: Row(children: <Widget>[
+            Expanded(
+                child:
 
-    if(_started_upload == true){
-      w.add(LinearProgressIndicator(value: progress_value,));
-    }
+               RaisedButton.icon(
+              icon: Icon(Icons.send,
+                  color: Theme.of(context).primaryTextTheme.title.color
+//          color: Theme.of(context).accentColor,
+                  ),
+              label: Text(
+                "Submit",
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.title.color),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: _started_upload ? null : onPressedSendButton,
+            )
+                )
+          ]));
+//    );
 
-    w.add(
-      FlatButton.icon(
-        icon: Icon(
-          Icons.send,
-          color: Theme.of(context).accentColor,
-        ),
-        label: Text(
-          "SEND",
-          style: TextStyle(color: Theme.of(context).accentColor),
-        ),
-        onPressed: _started_upload ? null : onPressedSendButton,
-      ),
-    );
+//    for (var el in _tasks.keys) {
+//      final item = _tasks[el];
+//      print("${item.tag} - ${item.status}");
+//
+//      w.add(UploadItemView(
+//        item: item,
+//        onCancel: cancelUpload,
+//      ));
+//    }
 
-    for (var el in _tasks.keys) {
-      final item = _tasks[el];
-      print("${item.tag} - ${item.status}");
-
-      w.add(UploadItemView(
-        item: item,
-        onCancel: cancelUpload,
-      ));
-    }
-
-    return Column(children: w);
+//    return Column(children: w);
   }
 
   void send_data() async {
-
     setState(() {
       _started_upload = true;
     });
+    widget.isUploading(_started_upload);
 
     print("Data sent: " + widget.survey.video_file + " video");
 //    var video = await ip.ImagePicker.pickVideo(source: ip.ImageSource.gallery);
@@ -252,7 +265,7 @@ class _UploadButtonState extends State<UploadButton> {
 
     FileToSend f_user = FileToSend(
         file_name_with_extension:
-        path_lib.basename(widget.survey.user_file.path),
+            path_lib.basename(widget.survey.user_file.path),
         file_path: widget.survey.user_file_path,
         is_video: false);
     f_user.file.name = "user";
@@ -261,7 +274,7 @@ class _UploadButtonState extends State<UploadButton> {
     files_to_send.add(f_user);
 
     Response response =
-    await api_instance.batchSignedUploadReqWithHttpInfo(inline_object);
+        await api_instance.batchSignedUploadReqWithHttpInfo(inline_object);
     print(response.body);
     var response_map = jsonDecode(response.body);
     widget.survey.id = response_map['surveyId'];
@@ -280,21 +293,20 @@ class _UploadButtonState extends State<UploadButton> {
       print("Sending file");
       var taskID = await file.send_data(uploader);
       String tag;
-      if(file.is_video){
+      if (file.is_video) {
         tag = "video";
-      }
-      else{
+      } else {
         tag = "userfile";
       }
       setState(() {
         _tasks.putIfAbsent(
             tag,
-                () => UploadItem(
-              id: taskID,
-              tag: tag,
-              type: MediaType.Video,
-              status: UploadTaskStatus.enqueued,
-            ));
+            () => UploadItem(
+                  id: taskID,
+                  tag: tag,
+                  type: MediaType.Video,
+                  status: UploadTaskStatus.enqueued,
+                ));
       });
     }
   }
@@ -323,7 +335,6 @@ class _UploadButtonState extends State<UploadButton> {
           textColor: Colors.white,
           fontSize: 16.0);
     } else {
-
       send_data();
 //      Alert(
 //        context: context,
@@ -383,13 +394,13 @@ class UploadItemView extends StatelessWidget {
         : Container();
     final buttonWidget = item.status == UploadTaskStatus.running
         ? Container(
-      height: 50,
-      width: 50,
-      child: IconButton(
-        icon: Icon(Icons.cancel),
-        onPressed: () => onCancel(item.id),
-      ),
-    )
+            height: 50,
+            width: 50,
+            child: IconButton(
+              icon: Icon(Icons.cancel),
+              onPressed: () => onCancel(item.id),
+            ),
+          )
         : Container();
     return Row(
       children: <Widget>[

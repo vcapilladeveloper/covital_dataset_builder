@@ -84,6 +84,7 @@ class SurveyDataExport{
 
   int age;
   double weight;
+  double height;
 
   File _user_file;
   String _user_file_path;
@@ -222,6 +223,7 @@ class SurveyDataExport{
 
     age = null;
     weight = null;
+    height = null;
 
     _user_file = null;
     _user_file_path = null;

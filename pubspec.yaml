@@ -94,6 +94,7 @@ flutter:
     - assets/logo.png
     - assets/logo2_small.png
     - assets/hollow_circle.svg
+    - assets/checkmark.png
 
         #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg

@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
-import 'user_data.dart';
-import 'commercial_device.dart';
+import 'survey_lib/user_data.dart';
+import 'survey_lib/commercial_device.dart';
 
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 // Import package
 import 'package:screen/screen.dart';
-
+import 'survey_lib/survey.dart';
 
 
 class UserDataContainer extends StatefulWidget {
@@ -57,6 +57,7 @@ class UserDataContainerState extends State<UserDataContainer> {
 //  UserDataType userdata = UserDataType();
 
 
+  Survey current_survey = Survey();
 
   String last_video;
   List<CameraDescription> cameras;

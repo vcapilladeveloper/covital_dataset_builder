@@ -3,7 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:image/image.dart' as imglib;
 import 'package:flutter/scheduler.dart';
 import 'user_data_container.dart';
-import 'O2process.dart';
+import 'O2process/O2process.dart';
 
 
 class Camera extends StatefulWidget {
