@@ -32,11 +32,13 @@ enum Ethnicity{
   asian,
 }
 
-enum Health{
+enum RespiratorySymptoms{
+  none,
+  mild,
+  moderate,
+  severe,
+  critical,
   undefined,
-  healthy,
-  recovering,
-  sick,
 }
 
 
@@ -93,7 +95,7 @@ class SurveyDataExport{
 //  @deprecated
 //  Ethnicity ethnicity = Ethnicity.undefinied;
   int skinColor;
-  Health health = Health.undefined;
+  RespiratorySymptoms health = RespiratorySymptoms.undefined;
 
   String phoneBrand;
   String phoneModel;
@@ -230,7 +232,7 @@ class SurveyDataExport{
 
     sex = Sex.undefined;
 //    ethnicity = Ethnicity.undefinied;
-    health = Health.undefined;
+    health = RespiratorySymptoms.undefined;
     skinColor = null;
 
   }

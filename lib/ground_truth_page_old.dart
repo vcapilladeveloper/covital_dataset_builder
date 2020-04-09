@@ -469,8 +469,8 @@ class _GroundTruthState extends State<GroundTruth> {
 
   List<Widget> createRadioListHealth() {
     List<Widget> widgets = List<Widget>();
-    for (Health health in Health.values) {
-      if(health != Health.undefined) {
+    for (RespiratorySymptoms health in RespiratorySymptoms.values) {
+      if(health != RespiratorySymptoms.undefined) {
         widgets.add(
           SizedBox(width: 200, child: RadioListTile(
             value: health,

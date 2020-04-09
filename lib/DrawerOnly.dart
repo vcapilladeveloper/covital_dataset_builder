@@ -114,7 +114,7 @@ class _DrawerOnlyState extends State<DrawerOnly>
                 title: Text("Tutorial"),
 //                subtitle: Text("fridgify.app@gmail.com"),
                 onTap: () {
-                  Navigator.of(context).pushReplacementNamed('/tutorial');
+                  Navigator.of(context).pushReplacementNamed('/start');
                 },
 //
               ),

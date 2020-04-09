@@ -15,16 +15,13 @@ import 'upload_button.dart';
 
 import 'survey_lib/survey.dart';
 
-
 class GroundTruthPage extends StatefulWidget {
   @override
   _GroundTruthPageState createState() => new _GroundTruthPageState();
 }
 
 class _GroundTruthPageState extends State<GroundTruthPage> {
-
   Survey survey;
-
 
 //  double o2_gt;
 //  double hr_gt;
@@ -75,15 +72,9 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 
     survey = UserDataContainer.of(context).data.current_survey;
 
-    survey.spo2Device = UserDataContainer
-        .of(context)
-        .data
-        .commercial_device;
+    survey.spo2Device = UserDataContainer.of(context).data.commercial_device;
 
-    assert(UserDataContainer
-        .of(context)
-        .data
-        .commercial_device != null);
+    assert(UserDataContainer.of(context).data.commercial_device != null);
     assert(survey.spo2Device != null);
 
 //    _controller = VideoPlayerController.file(File(survey.video_file))
@@ -123,7 +114,7 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("2 of 4: ground truth"),
+        title: Text("2 of 5: Measure using\noximeter"),
       ),
       body: body_widgets,
 //      floatingActionButton: init_app
@@ -143,8 +134,6 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
       children: <Widget>[
 //        deviceInfo(),
 
-
-
 //        spo2DeviceInfo(),
 
         completeCheck(),
@@ -155,7 +144,7 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 
 //        UserDataCard(),
 
-      Divider(),
+        Divider(),
 
         SPO2DeviceCard(),
 
@@ -179,19 +168,19 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
     );
   }
 
-  Widget completeCheck(){
+  Widget completeCheck() {
     return Container(
-      child: Column(
-        children: <Widget>[
-          ListTile(
-            title: Text("CoVital measurements complete", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
+        child: Column(
+      children: <Widget>[
+        ListTile(
+          title: Text("CoVital measurements complete",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+        ),
 //          Chewie(
 //            controller: _chewieController,
 //          ),
-        ],
-      )
-    );
+      ],
+    ));
   }
 
   Widget deviceInfo() {
@@ -216,105 +205,124 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 //    );
 //  }
 
-
-  Widget nextPageButton(){
+  Widget nextPageButton() {
     return Padding(
         padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
-                  child: Text(
-                    "Next: Patient Information",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryTextTheme.title.color),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  onPressed: () {
-                    if (survey.o2gt == null || survey.hrgt == null) {
-                      print("need gt data");
-                      Fluttertoast.showToast(
-                          msg: "please input data ground truth data for SpO2 and HR",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
+              child: Text(
+                "Next: Patient Information",
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.title.color),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                if (survey.o2gt == null || survey.hrgt == null) {
+                  print("need gt data");
+                  Fluttertoast.showToast(
+                      msg:
+                          "please input data ground truth data for SpO2 and HR",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
 //                timeInSecForIosWeb: 1,
-                          backgroundColor: Theme.of(context).accentColor,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    } else if (survey.o2gt > 100 ||
-                        survey.o2gt < 0 ||
-                        survey.hrgt < 0) {
-                      print("need gt data");
-                      Fluttertoast.showToast(
-                          msg: "please input valid data ground truth data for SpO2 and HR",
-                          toastLength: Toast.LENGTH_SHORT,
-                          gravity: ToastGravity.CENTER,
+                      backgroundColor: Theme.of(context).accentColor,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else if (survey.o2gt > 100 ||
+                    survey.o2gt < 0 ||
+                    survey.hrgt < 0) {
+                  print("need gt data");
+                  Fluttertoast.showToast(
+                      msg:
+                          "please input valid data ground truth data for SpO2 and HR",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
 //                timeInSecForIosWeb: 1,
-                          backgroundColor: Theme.of(context).accentColor,
-                          textColor: Colors.white,
-                          fontSize: 16.0);
-                    } else {
-                      Navigator.of(context).pushNamed("/patient_information");
-                    }
-                  },
-                ))
+                      backgroundColor: Theme.of(context).accentColor,
+                      textColor: Colors.white,
+                      fontSize: 16.0);
+                } else {
+                  Navigator.of(context).pushNamed("/patient_information");
+                }
+              },
+            ))
           ],
         ));
   }
 
   Widget GTMeasurements() {
     return Container(
-          child: Column(
-                children: <Widget>[
-                  ListTile(
-                    title: Text("Measure from finger pulse oximeter"),
-                  ),
-        Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child:TextFormField(
-            initialValue: survey.o2gt != null ? survey.o2gt.toString(): "",
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            title: Text("Measure from finger pulse oximeter"),
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      hintColor: survey.o2gt == null
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).hintColor), // set color here
+                  child: TextFormField(
+                    initialValue:
+                        survey.o2gt != null ? survey.o2gt.toString() : "",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+//                        enabledBorder: OutlineInputBorder(),
                         border: UnderlineInputBorder(),
 //                        prefixIcon: Icon(Icons.input),
                         labelText: "SpO2 (%)"
-                      //                  labelText: 'Frequency of capture (s)'
-                    ),
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.o2gt = double.parse(s);
+                          if (s.isNotEmpty) {
+                            survey.o2gt = double.parse(s);
+                          } else {
+                            survey.o2gt = null;
+                          }
                         });
                       });
                     },
-//                    onSubmitted: (String s) {
-//                      print("Submitted: " + s);
-//                      setState(() {
-//                        setState(() {
-//                          survey.o2gt = double.parse(s);
-//                        });
-//                      });
-//                    },
-                  )),
-        Padding(
-          padding: EdgeInsets.only(left: 20, right: 20),
-          child:TextFormField(
-            initialValue: survey.hrgt != null ?  survey.hrgt.toString() : "",
+                  ))),
+          SizedBox(
+            height: 10,
+          ),
+          Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      hintColor: survey.hrgt == null
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).hintColor), // set color here
+                  child: TextFormField(
+                    initialValue:
+                        survey.hrgt != null ? survey.hrgt.toString() : "",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                        border: UnderlineInputBorder(
-
-                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: UnderlineInputBorder(),
 //                        prefixIcon: Icon(Icons.input),
                         labelText: "Heart rate (BPM)"
-                      //                  labelText: 'Frequency of capture (s)'
-                    ),
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
                     onChanged: (String s) {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.hrgt = double.parse(s);
+                          if (s.isNotEmpty) {
+                            survey.hrgt = double.parse(s);
+                          } else {
+                            survey.hrgt = null;
+                          }
                         });
                       });
                     },
@@ -326,323 +334,87 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 //                        });
 //                      });
 //                    },
-                  )),
-                ],
-              ),
-        );
+                  ))),
+        ],
+      ),
+    );
   }
-
-//  Widget UserDataCard() {
-//    return Padding(
-//        padding: EdgeInsets.all(10),
-//        child: Card(
-//          color: Theme.of(context).primaryColorLight,
-//          child: Padding(
-//              padding: EdgeInsets.all(10),
-//              child: Column(
-//                children: <Widget>[
-//                  ListTile(
-//                    title: Text("User Data", style: TextStyle(fontWeight: FontWeight.bold)),
-//                  ),
-//                  TextField(
-//                    keyboardType: TextInputType.number,
-//                    decoration: InputDecoration(
-//                        border: OutlineInputBorder(),
-//                        prefixIcon: Icon(Icons.input),
-//                        labelText: "Age (years)"
-//                      //                  labelText: 'Frequency of capture (s)'
-//                    ),
-//                    onChanged: (String s) {
-//                      print("Submitted: " + s);
-//                      setState(() {
-//                        setState(() {
-//                          survey.age = int.parse(s);
-//                        });
-//                      });
-//                    },
-//                    onSubmitted: (String s) {
-//                      print("Submitted: " + s);
-//                      setState(() {
-//                        setState(() {
-//                          survey.age = int.parse(s);
-//                        });
-//                      });
-//                    },
-//                  ),
-//                  Divider(),
-//                  TextField(
-//                    keyboardType: TextInputType.number,
-//                    decoration: InputDecoration(
-//                        border: OutlineInputBorder(),
-//                        prefixIcon: Icon(Icons.input),
-//                        labelText: "Weight (kg)"
-//                      //                  labelText: 'Frequency of capture (s)'
-//                    ),
-//                    onChanged: (String s) {
-//                      print("Submitted: " + s);
-//                      setState(() {
-//                        setState(() {
-//                          survey.weight = double.parse(s);
-//                        });
-//                      });
-//                    },
-//                    onSubmitted: (String s) {
-//                      print("Submitted: " + s);
-//                      setState(() {
-//                        setState(() {
-//                          survey.weight = double.parse(s);
-//                        });
-//                      });
-//                    },
-//                  ),
-//                  Divider(),
-//                  Row(
-//                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                      children: <Widget>[
-//                        SizedBox (width: 50, child: Text("Sex")),
-//                        sexDropDown(),
-//                      ]),
-//                  Divider(),
-//                  Row(
-//                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-//                      children: <Widget>[
-//                        SizedBox (width: 50, child: Text("Health")),
-//                        healthDropDown(),
-//                      ]),
-//                  Divider(),
-//                  Row(
-//                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-//                      children: <Widget>[
-////                        Text("Ethnicity"),
-////                        ethnicityDropDown(),
-////                      ]),
-//                        OutlineButton(
-//                          onPressed: (){
-//                            var colors = UserDataContainer.of(context).data.colors;
-//                            _openColorPicker(context, colors);
-//
-//                          },
-//                          child: const Text('Select skin color'),
-//                        ),
-//                        survey.skinColor == null ? Text("None") : CircleColor(color: Color(survey.skinColor), circleSize: 35,),
-//                      ]),
-//
-//
-//                ],
-//              )),
-//        ));
-//  }
-//
-//  void _openColorPicker(BuildContext context, List<ColorSwatch> colors) async {
-//    _openDialog(
-//        context,
-//        "Skin Color",
-//        MaterialColorPicker(
-//          allowShades: false,
-//          onMainColorChange: (Color color) {
-//            // Handle color changes
-//            setState(() {
-//              survey.skinColor = color.value;
-//              print("updated skin color: " + color.value.toString());
-//            });
-//          },
-////          selectedColor: Colors.red,
-//          colors: colors,
-//        )
-//    );
-//  }
-//
-//  void _openDialog(BuildContext context, String title, Widget content) {
-//    showDialog(
-//      context: context,
-//      builder: (_) {
-//        return AlertDialog(
-//          contentPadding: const EdgeInsets.all(6.0),
-//          title: Text(title),
-//          content: content,
-//          actions: [
-//            FlatButton(
-//              child: Text('CANCEL'),
-//              onPressed: Navigator.of(context).pop,
-//            ),
-//            FlatButton(
-//              child: Text('SUBMIT'),
-//              onPressed: () {
-//                Navigator.of(context).pop();
-//
-////                setState(() => _mainColor = _tempMainColor);
-////                setState(() => _shadeColor = _tempShadeColor);
-//              },
-//            ),
-//          ],
-//        );
-//      },
-//    );
-//  }
-//
-//  List<Widget> createRadioListSex() {
-//    List<Widget> widgets = List<Widget>();
-//    for (Sex sex in Sex.values) {
-//      if(sex != Sex.undefined) {
-//        widgets.add(
-//          SizedBox(width: 200, child: RadioListTile(
-//            value: sex,
-//            groupValue: survey.sex,
-//            title: Text(sex
-//                .toString()
-//                .split(".")
-//                .last),
-////          subtitle: Text(programming.developer),
-//            onChanged: (sex_change) {
-//              setState(() {
-//                survey.sex = sex_change;
-//              });
-//              print("Current ${sex_change}");
-//            },
-//            selected: survey.sex == sex,
-//            activeColor: Colors.green,
-//          )),
-//        );
-//      }
-//    }
-//    return widgets;
-//  }
-//
-//  Widget sexDropDown() {
-//    return Column(
-//      children:
-//      createRadioListSex(),
-//    );
-////    return DropdownButton<Sex>(
-////        value: survey.sex,
-////        onChanged: (Sex newValue) {
-////          setState(() {
-////            survey.sex = newValue;
-////          });
-////        },
-////        items: Sex.values.map((Sex sex) {
-////          return DropdownMenuItem<Sex>(value: sex, child: Text(sex.toString()));
-////        }).toList());
-//  }
-//
-////  Widget ethnicityDropDown() {
-////    return DropdownButton<Ethnicity>(
-////        value: survey.ethnicity,
-////        onChanged: (Ethnicity newValue) {
-////          setState(() {
-////            survey.ethnicity = newValue;
-////          });
-////        },
-////        items: Ethnicity.values.map((Ethnicity ethni) {
-////          return DropdownMenuItem<Ethnicity>(
-////              value: ethni, child: Text(ethni.toString()));
-////        }).toList());
-////  }
-//
-//  List<Widget> createRadioListHealth() {
-//    List<Widget> widgets = List<Widget>();
-//    for (Health health in Health.values) {
-//      if(health != Health.undefined) {
-//        widgets.add(
-//          SizedBox(width: 200, child: RadioListTile(
-//            value: health,
-//            groupValue: survey.health,
-//            title: Text(health
-//                .toString()
-//                .split(".")
-//                .last),
-////
-////          subtitle: Text(programming.developer),
-//            onChanged: (health_change) {
-//              setState(() {
-//                survey.health = health_change;
-//              });
-//              print("Current ${health_change}");
-//            },
-//            selected: survey.health == health,
-//            activeColor: Colors.green,
-//          )),
-//        );
-//      }
-//    }
-//    return widgets;
-//  }
-//
-//  Widget healthDropDown() {
-//    return Column(
-//      children:
-//      createRadioListHealth(),
-//    );
-//
-////    return DropdownButton<Health>(
-////        value: survey.health,
-////        onChanged: (Health newValue) {
-////          setState(() {
-////            survey.health = newValue;
-////          });
-////        },
-////        items: Health.values.map((Health health) {
-////          return DropdownMenuItem<Health>(
-////              value: health, child: Text(health.toString()));
-////        }).toList());
-//  }
-
 
   Widget SPO2DeviceCard() {
     var settings = UserDataContainer.of(context).data.commercial_device;
     return Container(
-
-              child: Column(
-                  children: <Widget>[
-                    ListTile(
-                      title: Text("About your finger pulse oximeter (optional)"),
-                    ),
-    Padding(
-    padding: EdgeInsets.only(left: 20, right: 20),
-    child:TextFormField(
+        child: Column(children: <Widget>[
+      ListTile(
+        title: Text("About your finger pulse oximeter (optional)"),
+      ),
+      Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Theme(
+              data: Theme.of(context).copyWith(
+                  hintColor: settings.brand == null
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).hintColor), // set color here
+              child: TextFormField(
 //                  keyboardType: TextInputType.number,
-                      initialValue: settings.brand == null ? "" : settings.brand,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
+                initialValue: settings.brand == null ? "" : settings.brand,
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: UnderlineInputBorder(),
 //                          prefixIcon: Icon(Icons.input),
-                          labelText: "Oximeter brand (optional)"
-                        //                  labelText: 'Frequency of capture (s)'
-                      ),
-                      onChanged: (String s) {
-                        print("Submitted: " + s);
-                        setState(() {
-                          setState(() {
-                            settings.brand = s;
-                            settings.save();
-                          });
-                        });
-                      },
-
-                    )),
+                    labelText: "Oximeter brand (optional)"
+                    //                  labelText: 'Frequency of capture (s)'
+                    ),
+                onChanged: (String s) {
+                  print("Submitted: " + s);
+                  setState(() {
+                    setState(() {
+                      if (s.isNotEmpty) {
+                        settings.brand = s;
+                      } else {
+                        settings.brand = null;
+                      }
+                      settings.save();
+                    });
+                  });
+                },
+              ))),
+      SizedBox(
+        height: 10,
+      ),
 //                    Divider(),
-    Padding(
-    padding: EdgeInsets.only(left: 20, right: 20),
-    child:TextFormField(
-                      initialValue: settings.model == null ? "" : settings.model,
+      Padding(
+          padding: EdgeInsets.only(left: 20, right: 20),
+          child: Theme(
+              data: Theme.of(context).copyWith(
+                  hintColor: settings.model == null
+                      ? Theme.of(context).accentColor
+                      : Theme.of(context).hintColor), // set color here
+              child: TextFormField(
+                initialValue: settings.model == null ? "" : settings.model,
 //                    keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                          border: UnderlineInputBorder(),
+                decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Colors.white,
+                    border: UnderlineInputBorder(),
 //                          prefixIcon: Icon(Icons.input),
-                          labelText: "Oximeter model (optional)"
-                        //                  labelText: 'Frequency of capture (s)'
-                      ),
-                      onChanged: (String s) {
-                        print("Submitted: " + s);
-                        setState(() {
-                          setState(() {
-                            settings.model = s;
-                            settings.save();
-                          });
-                        });
-                      },
-
-                    )),
-                  ]
-              ));
+                    labelText: "Oximeter model (optional)"
+                    //                  labelText: 'Frequency of capture (s)'
+                    ),
+                onChanged: (String s) {
+                  print("Submitted: " + s);
+                  setState(() {
+                    setState(() {
+                      if (s.isNotEmpty) {
+                        settings.model = s;
+                      } else {
+                        settings.model = null;
+                      }
+                      settings.save();
+                    });
+                  });
+                },
+              ))),
+    ]));
   }
 }

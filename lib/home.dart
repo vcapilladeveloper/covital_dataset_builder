@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => new _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with WidgetsBindingObserver {
   Survey survey;
 
 //  List<double> _accelerometerValues;
@@ -49,17 +49,24 @@ class _HomeState extends State<Home> {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 30;
-  int time_before_recording_in_sec = 10;
+  int time_recording_in_sec = 4;
+  int time_before_recording_in_sec = 1;
   bool _loading_recording_process = false;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       runInitTasks();
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   @protected
@@ -93,7 +100,7 @@ class _HomeState extends State<Home> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
-        title: Text("1 of 4: Data collection"),
+        title: Text("1 of 5: Measure with CoVital"),
       ),
       body: SafeArea(
         child: new Column(
@@ -159,7 +166,7 @@ class _HomeState extends State<Home> {
     List<Widget> ret = List<Widget>();
 
     ret.add(ListTile(
-      title: Text("Cover camera pad with finger."),
+      title: Text("Cover camera with finger pad.", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
       subtitle: Text(""),
     ));
 
@@ -209,7 +216,7 @@ class _HomeState extends State<Home> {
 
     ret.add(ListTile(
       title: Text("Cover camera pad with finger."),
-      subtitle: Text("Starting in " + _time_left.inSeconds.toString() + "s"),
+      subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
     ));
 
     ret.add(Expanded(
@@ -243,8 +250,8 @@ class _HomeState extends State<Home> {
     List<Widget> ret = List<Widget>();
 
     ret.add(ListTile(
-      title: Text("Stay still."),
-      subtitle: Text("Measuring: " + _time_left.inSeconds.toString() + "s"),
+      title: Text("Stay still for: " + _time_left.inSeconds.toString() + "s", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      subtitle: Text(""),
     ));
 
     ret.add(Expanded(

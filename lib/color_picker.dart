@@ -143,7 +143,7 @@ class _CovitalColorPickerState extends State<CovitalColorPicker> {
           onColorChoose: () => _onMainColorSelected(color),
           isSelected: _mainColor == color,
           iconSelected: widget.iconSelected,
-          elevation: widget.elevation,
+          elevation: 0,
         )
     ];
 
@@ -193,7 +193,7 @@ class _CovitalColorPickerState extends State<CovitalColorPicker> {
           onColorChoose: () => _onShadeColorSelected(color),
           isSelected: _shadeColor == color,
           iconSelected: widget.iconSelected,
-          elevation: widget.elevation,
+          elevation: 0,
         ),
     ];
   }

@@ -38,9 +38,11 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
     ..hrgt = (json['hrgt'] as num)?.toDouble()
     ..age = json['age'] as int
     ..weight = (json['weight'] as num)?.toDouble()
+    ..height = (json['height'] as num)?.toDouble()
     ..sex = _$enumDecodeNullable(_$SexEnumMap, json['sex'])
     ..skinColor = json['skinColor'] as int
-    ..health = _$enumDecodeNullable(_$HealthEnumMap, json['health'])
+    ..health =
+        _$enumDecodeNullable(_$RespiratorySymptomsEnumMap, json['health'])
     ..phoneBrand = json['phoneBrand'] as String
     ..phoneModel = json['phoneModel'] as String;
 }
@@ -66,9 +68,10 @@ Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
       'hrgt': instance.hrgt,
       'age': instance.age,
       'weight': instance.weight,
+      'height': instance.height,
       'sex': _$SexEnumMap[instance.sex],
       'skinColor': instance.skinColor,
-      'health': _$HealthEnumMap[instance.health],
+      'health': _$RespiratorySymptomsEnumMap[instance.health],
       'phoneBrand': instance.phoneBrand,
       'phoneModel': instance.phoneModel,
     };
@@ -111,9 +114,10 @@ const _$SexEnumMap = {
   Sex.female: 'female',
 };
 
-const _$HealthEnumMap = {
-  Health.undefined: 'undefined',
-  Health.healthy: 'healthy',
-  Health.recovering: 'recovering',
-  Health.sick: 'sick',
+const _$RespiratorySymptomsEnumMap = {
+  RespiratorySymptoms.mild: 'mild',
+  RespiratorySymptoms.moderate: 'moderate',
+  RespiratorySymptoms.severe: 'severe',
+  RespiratorySymptoms.critical: 'critical',
+  RespiratorySymptoms.undefined: 'undefined',
 };

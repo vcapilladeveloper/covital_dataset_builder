@@ -25,7 +25,6 @@ class PatientInformationPage extends StatefulWidget {
 class _PatientInformationPageState extends State<PatientInformationPage> {
   Survey survey;
 
-
   Color _selected_color = null;
   bool get_skin_color = true;
 
@@ -54,7 +53,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("3 of 4: patient information"),
+        title: Text("3 of 5: Patient information"),
       ),
       body: ListView(children: userDataCard()),
 //      floatingActionButton: init_app
@@ -65,7 +64,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //              ),
 //            )
 //          : null,
-    bottomNavigationBar: nextPageButton(),
+      bottomNavigationBar: nextPageButton(),
     );
   }
 
@@ -193,16 +192,19 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
     return [
       Container(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           ListTile(
             title: Text("Patient information"),
 //            subtitle: Text("Sex"),
           ),
 
-
-          Padding(padding: EdgeInsets.only(left:15),
-          child:Text("Sex", style: TextStyle(color: Colors.black54),)),
+          Padding(
+              padding: EdgeInsets.only(left: 15),
+              child: Text(
+                "Sex",
+                style: TextStyle(color: Colors.black54),
+              )),
 //          Divider(),
 
 //          ListTile(
@@ -254,118 +256,162 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
             ],
           ),
 
-          Padding(padding: EdgeInsets.only(left:15),
-              child:Text("Health", style: TextStyle(color: Colors.black54),)),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              SizedBox(
-                  width: 110,
-                  child: RaisedButton(
-                    child: new Text('Healthy'),
-                    textColor: Colors.white,
-//                    shape: new RoundedRectangleBorder(
-//                      borderRadius: new BorderRadius.circular(30.0),
-//                    ),
-                    color: survey.health == Health.healthy
-                        ? Theme.of(context).accentColor
-                        : Colors.grey,
-                    onPressed: () => setState(() => survey.health = Health.healthy),
-                  )),
-              SizedBox(
-                  width: 110,
-                  child: RaisedButton(
-                    child: new Text('Sick'),
-                    textColor: Colors.white,
-//                    shape: new RoundedRectangleBorder(
-//                      borderRadius: new BorderRadius.circular(30.0),
-//                    ),
-                    color: survey.health == Health.sick
-                        ? Theme.of(context).accentColor
-                        : Colors.grey,
-                    onPressed: () => setState(() => survey.health = Health.sick),
-                  )),
-              SizedBox(
-                  width: 110,
-                  child: RaisedButton(
-                    child: new Text('Unknown'),
-                    textColor: Colors.white,
-//                    shape: new RoundedRectangleBorder(
-//                      borderRadius: new BorderRadius.circular(30.0),
-//                    ),
-                    color: survey.health == Health.undefined
-                        ? Theme.of(context).accentColor
-                        : Colors.grey,
-                    onPressed: () => setState(() => survey.health = Health.undefined),
-                  ))
-            ],
-          ),
+//          Padding(
+//              padding: EdgeInsets.only(left: 15),
+//              child: Text(
+//                "Health",
+//                style: TextStyle(color: Colors.black54),
+//              )),
+//
+//          Row(
+//            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+//            children: <Widget>[
+//              SizedBox(
+//                  width: 110,
+//                  child: RaisedButton(
+//                    child: new Text('Healthy'),
+//                    textColor: Colors.white,
+////                    shape: new RoundedRectangleBorder(
+////                      borderRadius: new BorderRadius.circular(30.0),
+////                    ),
+//                    color: survey.health == Health.healthy
+//                        ? Theme.of(context).accentColor
+//                        : Colors.grey,
+//                    onPressed: () =>
+//                        setState(() => survey.health = Health.healthy),
+//                  )),
+//              SizedBox(
+//                  width: 110,
+//                  child: RaisedButton(
+//                    child: new Text('Sick'),
+//                    textColor: Colors.white,
+////                    shape: new RoundedRectangleBorder(
+////                      borderRadius: new BorderRadius.circular(30.0),
+////                    ),
+//                    color: survey.health == Health.sick
+//                        ? Theme.of(context).accentColor
+//                        : Colors.grey,
+//                    onPressed: () =>
+//                        setState(() => survey.health = Health.sick),
+//                  )),
+//              SizedBox(
+//                  width: 110,
+//                  child: RaisedButton(
+//                    child: new Text('Unknown'),
+//                    textColor: Colors.white,
+////                    shape: new RoundedRectangleBorder(
+////                      borderRadius: new BorderRadius.circular(30.0),
+////                    ),
+//                    color: survey.health == Health.undefined
+//                        ? Theme.of(context).accentColor
+//                        : Colors.grey,
+//                    onPressed: () =>
+//                        setState(() => survey.health = Health.undefined),
+//                  ))
+//            ],
+//          ),
 
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
-              child: TextFormField(
-    initialValue: survey.age != null ? survey.age.toString() : "",
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      hintColor: survey.age == null
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).hintColor), // set color here
+                  child: TextFormField(
+                    initialValue:
+                        survey.age != null ? survey.age.toString() : "",
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: UnderlineInputBorder(),
 //                        prefixIcon: Icon(Icons.input),
-                    labelText: "Age (years)"
-                    //                  labelText: 'Frequency of capture (s)'
-                    ),
-                onChanged: (String s) {
-                  print("Submitted: " + s);
-                  setState(() {
-                    setState(() {
-                      survey.age = int.parse(s);
-                    });
-                  });
-                },
-
-              )),
+                        labelText: "Age (years)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          if(s.isNotEmpty) {
+                            survey.age = int.parse(s);
+                          }
+                          else{
+                            survey.age = null;
+                          }
+                        });
+                      });
+                    },
+                  ))),
           Divider(),
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
-              child: TextFormField(
-                initialValue: survey.weight != null ?survey.weight.toString() : "",
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      hintColor: survey.weight == null
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).hintColor), // set color here
+                  child: TextFormField(
+                    initialValue:
+                        survey.weight != null ? survey.weight.toString() : "",
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: UnderlineInputBorder(),
 //                        prefixIcon: Icon(Icons.input),
-                    labelText: "Weight (kg)"
-                    //                  labelText: 'Frequency of capture (s)'
-                    ),
-                onChanged: (String s) {
-                  print("Submitted: " + s);
-                  setState(() {
-                    setState(() {
-                      survey.weight = double.parse(s);
-                    });
-                  });
-                },
-              )),
+                        labelText: "Weight (kg)"
+                        //                  labelText: 'Frequency of capture (s)'
+                        ),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          if(s.isNotEmpty) {
+                            survey.weight = double.parse(s);
+                          }
+                          else{
+                            survey.weight = null;
+                          }
+                        });
+                      });
+                    },
+                  ))),
           Divider(),
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
-              child: TextFormField(
-    initialValue: survey.height != null ?survey.height.toString() : "",
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                    border: UnderlineInputBorder(),
+              child: Theme(
+                  data: Theme.of(context).copyWith(
+                      hintColor: survey.height == null
+                          ? Theme.of(context).accentColor
+                          : Theme.of(context).hintColor), // set color here
+                  child: TextFormField(
+                    initialValue:
+                    survey.height != null ? survey.height.toString() : "",
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                        filled: true,
+                        fillColor: Colors.white,
+                        border: UnderlineInputBorder(),
 //                        prefixIcon: Icon(Icons.input),
-                    labelText: "Height (cm)"
-                    //                  labelext: 'Frequency of capture (s)'
+                        labelText: "Height (cm)"
+                      //                  labelText: 'Frequency of capture (s)'
                     ),
-                onChanged: (String s) {
-                  print("Submitted: " + double.parse(s).toString());
-                  setState(() {
-                    setState(() {
-                      survey.height = double.parse(s);
-                    });
-                  });
-                },
-
-              )),
+                    onChanged: (String s) {
+                      print("Submitted: " + s);
+                      setState(() {
+                        setState(() {
+                          if(s.isNotEmpty) {
+                            survey.height = double.parse(s);
+                          }
+                          else{
+                            survey.height = null;
+                          }
+                        });
+                      });
+                    },
+                  ))),
           Divider(),
 //                  Row(
 //                      mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -382,15 +428,12 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //              ]),
 //          Divider(),
 
-
-        ListTile(title:Text("Skin tone (approximate)")),
+          ListTile(title: Text("Skin tone (approximate)")),
 
           Row(
-
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children : [
-
+              children: [
 //                CircleColor(circleSize: 35, color: Colors.transparent, onColorChoose: (){
 //                  print("Chrosen");
 //                  setState(() {
@@ -419,10 +462,13 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //
 //              },
 //            ),
-            SizedBox(height: 100,
-          child: get_skin_color ? colorPicker(UserDataContainer.of(context).data.colors) : Container(),
-          )]),
-
+                SizedBox(
+                  height: 100,
+                  child: get_skin_color
+                      ? colorPicker(UserDataContainer.of(context).data.colors)
+                      : Container(),
+                )
+              ]),
 
 //          Row(
 //              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -446,7 +492,6 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //              ]),
 
 //        nextPageButton()
-
         ],
       )),
     ];
@@ -455,7 +500,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
   Widget colorPicker(List<ColorSwatch> colors) {
     return CovitalColorPicker(
 //      circleSize: 25,
-    circleSize: 40,
+      circleSize: 40,
       allowShades: false,
       onMainColorChange: (Color color) {
         // Handle color changes
@@ -465,7 +510,8 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
           print("updated skin color: " + color.value.toString());
         });
       },
-      iconSelected: survey.skinColor != null ? Icons.check : Icons.tab_unselected,
+      iconSelected:
+          survey.skinColor != null ? Icons.check : Icons.tab_unselected,
       selectedColor: _selected_color,
       colors: colors,
     );
@@ -662,26 +708,24 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //        ));
 //  }
 
-
-  Widget nextPageButton(){
+  Widget nextPageButton() {
     return Padding(
         padding: EdgeInsets.only(left: 10, right: 10),
         child: Row(
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
-                  child: Text(
-                    "Next: review",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryTextTheme.title.color),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  onPressed: () {
-                    Navigator.of(context).pushNamed("/review_page");
-                  },
-                ))
+              child: Text(
+                "Next: Patient History",
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.title.color),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                Navigator.of(context).pushNamed("/medical_history");
+              },
+            ))
           ],
         ));
   }
-
 }

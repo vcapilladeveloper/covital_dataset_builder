@@ -10,6 +10,7 @@ import 'patient_information_page.dart';
 import 'medical_history_page.dart';
 import 'review_page.dart';
 import 'thank_you_page.dart';
+import 'start_screen.dart';
 
 void main() => runApp(new MyApp());
 
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
             '/medical_history': (context) => MedicalHistoryPage(),
             '/review_page': (context) => ReviewPage(),
             '/thank_you': (context) => ThankYouPage(),
+            '/start': (context) => StartPage(),
 //             When navigating to the "/second" route, build the SecondScreen widget.
 //            '/lifelapse_edit_page': (context) => TimeLapsePage(),
           },
@@ -75,7 +77,7 @@ class _LoadingScreenState extends State<LoadingScreen>{
 //    }
 //    else {
       print("Going to home");
-      Navigator.of(context).pushReplacementNamed('/tutorial');
+      Navigator.of(context).pushReplacementNamed('/start');
 //    }
   }
 

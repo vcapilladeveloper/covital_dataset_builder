@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
 import 'user_data_container.dart';
 import 'survey_lib/survey.dart';
 import 'upload_button.dart';
@@ -83,7 +84,7 @@ class _ReviewPageState extends State<ReviewPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("4 of 4: review"),
+        title: Text(uploading ? "Submitting..." : "5 of 5: Review and submit"),
       ),
       body: init_app ? all() : CircularProgressIndicator(),
 //      floatingActionButton: init_app
@@ -115,10 +116,10 @@ class _ReviewPageState extends State<ReviewPage> {
   Widget all(){
     return Column(
       children: <Widget>[
-
-        Chewie(
-          controller: _chewieController,
-        ),
+//
+//        Chewie(
+//          controller: _chewieController,
+//        ),
 
         pulseOxReview(),
 
@@ -172,7 +173,7 @@ class _ReviewPageState extends State<ReviewPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text("Oximeter brand"),
-            Text(survey.spo2Device.brand.toString(), style: TextStyle(fontWeight: FontWeight.bold),)
+            Text(survey.spo2Device.brand != null ? survey.spo2Device.brand.toString() : "undefined", style: TextStyle(fontWeight: FontWeight.bold),)
           ],
         ),
 
@@ -182,7 +183,7 @@ class _ReviewPageState extends State<ReviewPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text("Oximeter model"),
-            Text(survey.spo2Device.model.toString(), style: TextStyle(fontWeight: FontWeight.bold),)
+            Text(survey.spo2Device.model != null ? survey.spo2Device.model.toString() : "undefined", style: TextStyle(fontWeight: FontWeight.bold),)
           ],
         ),
 
@@ -224,8 +225,8 @@ class _ReviewPageState extends State<ReviewPage> {
                           Text("Sex"),
                           SizedBox(height: 10,),
                           Text("Height"),
-                          SizedBox(height: 10,),
-                          Text("Health"),
+//                          SizedBox(height: 10,),
+//                          Text("Respiratory Symptoms"),
                         ])),
                 Expanded(
                     child:Column(
@@ -234,9 +235,9 @@ class _ReviewPageState extends State<ReviewPage> {
                         children: <Widget>[
                           Text(survey.sex.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
                           SizedBox(height: 10,),
-                          Text(survey.height.toString() + " cm", style: TextStyle(fontWeight: FontWeight.bold),),
-                          SizedBox(height: 10,),
-                          Text(survey.health.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
+                          Text(survey.height != null ? survey.height.toString() + " cm" : "undefined", style: TextStyle(fontWeight: FontWeight.bold),),
+//                          SizedBox(height: 10,),
+//                          Text(survey.health.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),),
 
 
                         ])),
@@ -258,9 +259,9 @@ class _ReviewPageState extends State<ReviewPage> {
 //              mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: <Widget>[
 
-                          Text(survey.age.toString() + " years", style: TextStyle(fontWeight: FontWeight.bold),),
+                          Text(survey.age != null ? survey.age.toString() + " years" : "undefined", style: TextStyle(fontWeight: FontWeight.bold),),
                           SizedBox(height: 10,),
-                          Text(survey.weight.toString() + " kg", style: TextStyle(fontWeight: FontWeight.bold),)
+                          Text(survey.weight != null ? survey.weight.toString() + " kg": "undefined", style: TextStyle(fontWeight: FontWeight.bold),)
 
                         ])),
 //                Row(
@@ -279,7 +280,15 @@ class _ReviewPageState extends State<ReviewPage> {
 
               ],
             ),
+            SizedBox(height: 20,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
 
+                Text("Respiratory Symptoms "),
+                Text(survey.health.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),)
+              ],
+            ),
 //                Expanded(child:Column(
 //              children: <Widget>[
 //                Row(
@@ -302,7 +311,7 @@ class _ReviewPageState extends State<ReviewPage> {
 //            ],),
 
 
-            SizedBox(height: 10,),
+            SizedBox(height: 20,),
 
 //            Row(
 //              mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -315,7 +324,7 @@ class _ReviewPageState extends State<ReviewPage> {
 //              ],
 //            ),
 
-            SizedBox(height: 10,),
+//            SizedBox(height: 10,),
 
 
 
@@ -333,6 +342,7 @@ class _ReviewPageState extends State<ReviewPage> {
                     : CircleColor(
                         color: Color(survey.skinColor),
                         circleSize: 35,
+              elevation: 0,
                       ),
               ],
             ),
