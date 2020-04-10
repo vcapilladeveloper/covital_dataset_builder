@@ -35,6 +35,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   Timer _timer_stop_recording;
 
+  bool camera_is_init;
+
   String imagePath;
   CountDown _cd;
   StreamSubscription<Duration> _sub_cd;
@@ -49,8 +51,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   bool init_process = false;
 //  String videoPath;
 
-  int time_recording_in_sec = 4;
-  int time_before_recording_in_sec = 1;
+  int time_recording_in_sec = 30;
+  int time_before_recording_in_sec = 10;
   bool _loading_recording_process = false;
 
   @override
@@ -166,25 +168,33 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     List<Widget> ret = List<Widget>();
 
     ret.add(ListTile(
-      title: Text("Cover camera with finger pad.", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),),
+      title: Text(
+        "Cover camera with finger pad.",
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      ),
       subtitle: Text(""),
     ));
 
     ret.add(Expanded(
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: Center(
-            child: _cameraPreviewWidget(),
+      child: InkWell(
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(1.0),
+            child: Center(
+              child: _cameraPreviewWidget(),
+            ),
+          ),
+          decoration: BoxDecoration(
+            color: Colors.black,
+            border: Border.all(
+              color: Colors.grey,
+              width: 3.0,
+            ),
           ),
         ),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border.all(
-            color: Colors.grey,
-            width: 3.0,
-          ),
-        ),
+        onTap: controller != null && controller.value.isInitialized == false ? () {
+          onNewCameraSelected(UserDataContainer.of(context).data.cameras[0]);
+        } : null,
       ),
     ));
 
@@ -216,7 +226,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
     ret.add(ListTile(
       title: Text("Cover camera with finger pad."),
-      subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
     ));
 
     ret.add(Expanded(
@@ -227,15 +238,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
             child: _cameraPreviewWidget(),
           ),
         ),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border.all(
-            color: controller != null && controller.value.isRecordingVideo
-                ? Colors.redAccent
-                : Colors.grey,
-            width: 3.0,
-          ),
-        ),
+//        decoration: BoxDecoration(
+//          color: Colors.black,
+//          border: Border.all(
+//            color: controller != null && controller.value.isRecordingVideo
+//                ? Colors.redAccent
+//                : Colors.grey,
+//            width: 3.0,
+//          ),
+//        ),
       ),
     ));
 
@@ -250,29 +261,31 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     List<Widget> ret = List<Widget>();
 
     ret.add(ListTile(
-      title: Text("Stay still for: " + _time_left.inSeconds.toString() + "s", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+      title: Text("Stay still for: " + _time_left.inSeconds.toString() + "s",
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
       subtitle: Text(""),
     ));
 
-    ret.add(Expanded(
-      child: Container(
+    ret.add(
+      Expanded(
+          child: Container(
         child: Padding(
           padding: const EdgeInsets.all(1.0),
           child: Center(
             child: _cameraPreviewWidget(),
           ),
         ),
-        decoration: BoxDecoration(
-          color: Colors.black,
-          border: Border.all(
-            color: controller != null && controller.value.isRecordingVideo
-                ? Colors.redAccent
-                : Colors.grey,
-            width: 3.0,
-          ),
-        ),
-      ),
-    ));
+//          decoration: BoxDecoration(
+//            color: Colors.black,
+//            border: Border.all(
+//              color: controller != null && controller.value.isRecordingVideo
+//                  ? Colors.redAccent
+//                  : Colors.grey,
+//              width: 3.0,
+//            ),
+//          ),
+      )),
+    );
 
 //    ret.add(_cameraTogglesRowWidget());
 
@@ -288,8 +301,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
-
-                  elevation: 0,
+              elevation: 0,
               child: Text(
                 "Start measurement",
                 style: TextStyle(
@@ -342,33 +354,34 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   Widget stop_recording_button() {
     return Padding(
-      padding: EdgeInsets.only(left: 10, right: 10),
-      child: Row(
-        children: <Widget>[
-      Expanded(
-      child:RaisedButton(
-        elevation: 0,
-      child: Text(
-        "Cancel",
-        style: TextStyle(color: Theme.of(context).primaryTextTheme.title.color),
-      ),
-      color: Theme.of(context).accentColor,
-      onPressed: () {
-        print("stop to record");
-        setState(() {
-          _loading_recording_process = false;
-          controller.flash(false);
-          init_process = false;
-          _sub_cd?.cancel();
-          _timer_stop_recording?.cancel();
+        padding: EdgeInsets.only(left: 10, right: 10),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+                child: RaisedButton(
+              elevation: 0,
+              child: Text(
+                "Cancel",
+                style: TextStyle(
+                    color: Theme.of(context).primaryTextTheme.title.color),
+              ),
+              color: Theme.of(context).accentColor,
+              onPressed: () {
+                print("stop to record");
+                setState(() {
+                  _loading_recording_process = false;
+                  controller.flash(false);
+                  init_process = false;
+                  _sub_cd?.cancel();
+                  _timer_stop_recording?.cancel();
 
-          _sub_cd_recording?.cancel();
-          onStopRecording(was_cancelled: true);
-        });
-      },
-    ))
-        ],
-      ));
+                  _sub_cd_recording?.cancel();
+                  onStopRecording(was_cancelled: true);
+                });
+              },
+            ))
+          ],
+        ));
   }
 
 //  Widget record_button() {
@@ -455,8 +468,10 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   /// Display the preview from the camera (or a message if the preview is not available).
   Widget _cameraPreviewWidget() {
     if (controller == null || !controller.value.isInitialized) {
-      return const Text(
-        'Tap a camera',
+      return Text(
+        controller == null || controller.value.isInitialized
+            ? ' Start measurements'
+            : 'Tap here to enable the camera',
         style: TextStyle(
           color: Colors.white,
           fontSize: 24.0,
