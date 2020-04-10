@@ -502,7 +502,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 
   void _showCameraException(CameraException e) {
     print(e.code + " " + e.description);
-    showInSnackBar('Error: ${e.code}\n${e.description}');
+    showInSnackBar('${e.description}\nCamera is disabled inside App settings');
   }
 
   void showInSnackBar(String message) {
