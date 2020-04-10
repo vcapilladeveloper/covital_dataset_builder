@@ -455,9 +455,11 @@ packages:
   openapi:
     dependency: "direct main"
     description:
-      path: "/home/malcolm/AndroidStudioProjects/dart_api_covital"
-      relative: false
-    source: path
+      path: "."
+      ref: master
+      resolved-ref: "029563ff31963ec90c0dfb3c39d5ea3c6b06ba31"
+      url: "https://github.com/CoVital-Project/dart_api_covital"
+    source: git
     version: "1.0.0"
   package_config:
     dependency: transitive

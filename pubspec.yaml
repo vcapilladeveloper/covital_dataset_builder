@@ -37,7 +37,9 @@ dependencies:
   flutter_ffmpeg:
   countdown:
   openapi:
-    path: /home/malcolm/AndroidStudioProjects/dart_api_covital
+    git:
+      url: https://github.com/CoVital-Project/dart_api_covital
+      ref: master
   flutter_uploader:
   sensors:
   device_info:
