@@ -196,15 +196,38 @@ class _UploadButtonState extends State<UploadButton> {
       return Padding(
           padding: EdgeInsets.only(left: 10, right: 10),
           child: Row(children: <Widget>[
+
+          Expanded(
+          child:
+          FlatButton(
+//            icon: Icon(Icons.edit,
+//                color: Theme.of(context).accentColor
+////          color: Theme.of(context).accentColor,
+//            ),
+            child: Text(
+              "Edit",
+              style: TextStyle(
+                  color: Theme.of(context).accentColor),
+            ),
+//            color: Theme.of(context).accentColor,
+            onPressed: (){
+              Navigator.of(context).pushReplacementNamed("/gtpage");
+            }
+          )
+          ),
+
+            SizedBox(width: 10),
+
             Expanded(
                 child:
 
-               RaisedButton.icon(
-              icon: Icon(Icons.send,
-                  color: Theme.of(context).primaryTextTheme.title.color
-//          color: Theme.of(context).accentColor,
-                  ),
-              label: Text(
+               RaisedButton(
+                 elevation: 0,
+//              icon: Icon(Icons.send,
+//                  color: Theme.of(context).primaryTextTheme.title.color
+////          color: Theme.of(context).accentColor,
+//                  ),
+              child: Text(
                 "Submit",
                 style: TextStyle(
                     color: Theme.of(context).primaryTextTheme.title.color),

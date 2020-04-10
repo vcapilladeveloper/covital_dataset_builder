@@ -230,6 +230,7 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
+                  elevation: 0,
               child: Text(
                 "Next: review",
                 style: TextStyle(

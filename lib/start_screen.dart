@@ -54,12 +54,14 @@ class _StartPageState extends State<StartPage> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Expanded(child:Container()),
-            Image.asset("assets/logo2_small.png"),
+            Image.asset("assets/logo2_small.png", height: 80,),
+            SizedBox(height: 35,),
 //            Center(child: Text("Success!", style: TextStyle(fontSize: 30))),
 
-            Center(child: Text("Thank you for helping us create CoVital, an app to self-monitor oxygen saturation and heart rate.\n", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,)),
-            Center(child: Text("Instructions:\n• Measure the patient O2 and heart rate using this app.\n• Measure the patient O2 and heart using a pulse oximeter.\n• Provide patient information.\n• Submit.", style: TextStyle(fontSize: 20), textAlign: TextAlign.center)),
-            Center(child: Text("\nWe will use your submission to calibrate CoVital for accurate readings.", style: TextStyle(fontSize: 20), textAlign: TextAlign.center)),
+            Center(child: Text("Thank you for providing data that will help us create CoVital, which will allow patients to self-monitor oxygen saturation and heart rate. \n\nPlease use this calibration tool to gather and submit the data we need to make CoVital accurate.\n", style: TextStyle(fontSize: 20), textAlign: TextAlign.center,)),
+            Center(child: Text("Instructions:", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
+        Center(child: Text("• Measure the patient O2 and heart rate using this app.\n• Measure the patient O2 and heart using a pulse oximeter.\n• Provide patient information.\n• Submit.", style: TextStyle(fontSize: 20), textAlign: TextAlign.center)),
+//            Center(child: Text("\nWe will use your submission to calibrate CoVital for accurate readings.", style: TextStyle(fontSize: 20), textAlign: TextAlign.center)),
             Expanded(child:Container()),
             nextPageButton()
           ],

@@ -715,6 +715,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
+                  elevation: 0,
               child: Text(
                 "Next: Patient History",
                 style: TextStyle(

@@ -364,9 +364,9 @@ data,
     return Container(child: Column( children: ret));
   }
 
-  Widget nextPageButton(){
-    return UploadButton();
-  }
+//  Widget nextPageButton(){
+//    return UploadButton();
+//  }
 
 }
 

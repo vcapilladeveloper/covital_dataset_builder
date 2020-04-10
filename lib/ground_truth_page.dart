@@ -212,6 +212,7 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
+                  elevation: 0,
               child: Text(
                 "Next: Patient Information",
                 style: TextStyle(
@@ -257,7 +258,7 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
       child: Column(
         children: <Widget>[
           ListTile(
-            title: Text("Measure from finger pulse oximeter"),
+            title: Text("Enter data from finger pulse oximeter"),
           ),
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20),

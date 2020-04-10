@@ -78,6 +78,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
+                  elevation: 0,
                   child: Text(
                     "Start a new measurement",
                     style: TextStyle(
@@ -86,7 +87,7 @@ class _ThankYouPageState extends State<ThankYouPage> {
                   color: Theme.of(context).accentColor,
                   onPressed: () {
                     survey.clear();
-                    Navigator.of(context).pushNamed("/home");
+                    Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
                   },
                 ))
           ],

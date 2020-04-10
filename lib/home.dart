@@ -215,7 +215,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     List<Widget> ret = List<Widget>();
 
     ret.add(ListTile(
-      title: Text("Cover camera pad with finger."),
+      title: Text("Cover camera with finger pad."),
       subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
     ));
 
@@ -288,6 +288,8 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
           children: <Widget>[
             Expanded(
                 child: RaisedButton(
+
+                  elevation: 0,
               child: Text(
                 "Start measurement",
                 style: TextStyle(
@@ -345,6 +347,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
         children: <Widget>[
       Expanded(
       child:RaisedButton(
+        elevation: 0,
       child: Text(
         "Cancel",
         style: TextStyle(color: Theme.of(context).primaryTextTheme.title.color),
