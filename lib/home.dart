@@ -21,7 +21,7 @@ class Home extends StatefulWidget {
   _HomeState createState() => new _HomeState();
 }
 
-class _HomeState extends State<Home> with WidgetsBindingObserver {
+class _HomeState extends State<Home> with WidgetsBindingObserver, SingleTickerProviderStateMixin  {
   Survey survey;
 
 //  List<double> _accelerometerValues;
@@ -42,7 +42,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   StreamSubscription<Duration> _sub_cd;
   CountDown _cd_recording;
   StreamSubscription<Duration> _sub_cd_recording;
-  Duration _time_left;
+  Duration _time_left = Duration(seconds: -1);
   CameraSignal camera_signal_initializer;
 
   CameraController controller;
@@ -55,10 +55,15 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
   int time_before_recording_in_sec = 10;
   bool _loading_recording_process = false;
 
+  int animation_duration_in_ms = 400;
+
+
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+//    prepareAnimations();
 
     SchedulerBinding.instance.addPostFrameCallback((_) {
       runInitTasks();
@@ -71,13 +76,29 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  ///Setting up the animation
+//  void prepareAnimations() {
+//    expandController = AnimationController(
+////      lowerBound: 10,
+////        upperBound: 500,
+//        vsync: this,
+//        duration: Duration(milliseconds: 5000)
+//    );
+//    animation = CurvedAnimation(
+//      parent: expandController,
+//      curve: Curves.fastOutSlowIn,
+//    );
+//  }
+
   @protected
   Future runInitTasks() async {
     survey = UserDataContainer.of(context).data.current_survey;
     var cameras = UserDataContainer.of(context).data.cameras;
 
     onNewCameraSelected(cameras[0]);
+
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,19 +106,140 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
 //    var bright = theme.brightness;
     String icon = 'assets/images/logo_dark.png';
 
-    List<Widget> column;
+
+
+
+    List<Widget> column = [
+
+      AnimatedContainer(
+        width: 400,
+        height: init_process ? 470 : 270.0,
+        duration: Duration(milliseconds: animation_duration_in_ms),
+        child:InkWell(
+          child: Container(
+            child: Padding(
+              padding: const EdgeInsets.all(1.0),
+              child: Center(
+                child: _cameraPreviewWidget(),
+              ),
+            ),
+            decoration: BoxDecoration(
+              color: Colors.black,
+              border: Border.all(
+                color: controller != null && controller.value.isRecordingVideo
+                    ? Colors.redAccent
+                    : Colors.grey,
+                width: 3.0,
+              ),
+            ),
+          ),
+          onTap: controller != null && controller.value.isInitialized == false ? () {
+            onNewCameraSelected(UserDataContainer.of(context).data.cameras[0]);
+          } : null,
+        ),
+
+      ),
+
+
+
+
+      init_process == false || _loading_recording_process == true ? AnimatedCrossFade(
+        duration: Duration(milliseconds: animation_duration_in_ms),
+        firstChild: Container(child:Column(children: <Widget>[
+
+          Image.asset("assets/tutorial.png", height: 200,),
+          Center(child:Text("Completely cover the rear camera with your finger", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center,)),
+
+          SizedBox(height: 10),
+
+          Center(child:Text("Wipe lens and wash hands for best results", style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
+
+          SizedBox(height: 30),
+        ],)),
+        secondChild: countDownStart(),
+        crossFadeState: init_process == false ? CrossFadeState.showFirst : CrossFadeState.showSecond,
+      ) : countDownRecording(),
+
+
+    ];
     Widget bottom_button;
 
+
+
+
+
     if (init_process == false) {
-      column = generate_widgets_init();
+//      column = generate_widgets_init();
       bottom_button = start_recording_button();
     } else if (_loading_recording_process == true) {
-      column = generate_widgets_getting_ready();
+//      column = generate_widgets_getting_ready();
       bottom_button = stop_recording_button();
     } else {
-      column = generate_widgets_recording();
+//      column = generate_widgets_recording();
       bottom_button = stop_recording_button();
     }
+
+//    column.insert(0,
+//
+//
+//        AnimatedContainer(
+//          width: 400,
+//          height: init_process ? 470 : 270.0,
+//          duration: Duration(seconds: 1),
+//            child:InkWell(
+//                child: Container(
+//                  child: Padding(
+//                    padding: const EdgeInsets.all(1.0),
+//                    child: Center(
+//                      child: _cameraPreviewWidget(),
+//                    ),
+//                  ),
+//                  decoration: BoxDecoration(
+//                    color: Colors.black,
+//                    border: Border.all(
+//                      color: controller != null && controller.value.isRecordingVideo
+//                          ? Colors.redAccent
+//                          : Colors.grey,
+//                      width: 3.0,
+//                    ),
+//                  ),
+//                ),
+//                onTap: controller != null && controller.value.isInitialized == false ? () {
+//                  onNewCameraSelected(UserDataContainer.of(context).data.cameras[0]);
+//                } : null,
+//              ),
+//
+//        )
+//    );
+
+//    column.insert(1,
+
+
+
+//
+//
+//
+////
+////      AnimatedOpacity(
+////        // If the widget is visible, animate to 0.0 (invisible).
+////        // If the widget is hidden, animate to 1.0 (fully visible).
+////          opacity: init_process == false ? 1.0 : 0.0,
+////          duration: Duration(milliseconds: 1000),
+////          // The green box must be a child of the AnimatedOpacity widget.
+////          child:
+////
+////          Container(child:Column(children: <Widget>[
+////
+////            Image.asset("assets/tutorial.png", height: 200,),
+////            Center(child:Text("Completely cover the rear camera with your finger", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center,)),
+////
+////            SizedBox(height: 10),
+////
+////            Center(child:Text("Wipe lens and wash hands for best results", style: TextStyle(color: Colors.grey), textAlign: TextAlign.center)),
+////
+////            SizedBox(height: 30),
+////          ],))),
+//          );
 
     return Scaffold(
       key: _scaffoldKey,
@@ -164,135 +306,159 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
     );
   }
 
-  List<Widget> generate_widgets_init() {
-    List<Widget> ret = List<Widget>();
 
-    ret.add(ListTile(
-      title: Text(
-        "Cover camera with finger pad.",
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      ),
-      subtitle: Text(""),
-    ));
-
-    ret.add(Expanded(
-      child: InkWell(
-        child: Container(
-          child: Padding(
-            padding: const EdgeInsets.all(1.0),
-            child: Center(
-              child: _cameraPreviewWidget(),
-            ),
-          ),
-          decoration: BoxDecoration(
-            color: Colors.black,
-            border: Border.all(
-              color: Colors.grey,
-              width: 3.0,
-            ),
-          ),
-        ),
-        onTap: controller != null && controller.value.isInitialized == false ? () {
-          onNewCameraSelected(UserDataContainer.of(context).data.cameras[0]);
-        } : null,
-      ),
-    ));
-
-//    ret.add(_cameraTogglesRowWidget());
-
-//    ret.add(Row(
-//      children: <Widget>[
-//        record_button(),
-//        init_process == false
-//            ? Container()
-//            : Text(_loading_recording_process
-//            ? "Get ready. Recording will start in " +
-//            _time_left.inSeconds.toString() +
-//            "s"
-//            : "Recording done in " +
-//            _time_left.inSeconds.toString() +
-//            "s")
-//      ],
-//    )
-//    );
-
-//    ret.add(start_recording_button());
-
-    return ret;
-  }
-
-  List<Widget> generate_widgets_getting_ready() {
-    List<Widget> ret = List<Widget>();
-
-    ret.add(ListTile(
+  Widget countDownStart(){
+    return ListTile(
       title: Text("Cover camera with finger pad."),
       subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-    ));
-
-    ret.add(Expanded(
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: Center(
-            child: _cameraPreviewWidget(),
-          ),
-        ),
-//        decoration: BoxDecoration(
-//          color: Colors.black,
-//          border: Border.all(
-//            color: controller != null && controller.value.isRecordingVideo
-//                ? Colors.redAccent
-//                : Colors.grey,
-//            width: 3.0,
-//          ),
-//        ),
-      ),
-    ));
-
-//    ret.add(_cameraTogglesRowWidget());
-
-//    ret.add(stop_recording_button());
-
-    return ret;
+    );
   }
 
-  List<Widget> generate_widgets_recording() {
-    List<Widget> ret = List<Widget>();
-
-    ret.add(ListTile(
+  Widget countDownRecording(){
+    return ListTile(
       title: Text("Stay still for: " + _time_left.inSeconds.toString() + "s",
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
       subtitle: Text(""),
-    ));
-
-    ret.add(
-      Expanded(
-          child: Container(
-        child: Padding(
-          padding: const EdgeInsets.all(1.0),
-          child: Center(
-            child: _cameraPreviewWidget(),
-          ),
-        ),
-//          decoration: BoxDecoration(
-//            color: Colors.black,
-//            border: Border.all(
-//              color: controller != null && controller.value.isRecordingVideo
-//                  ? Colors.redAccent
-//                  : Colors.grey,
-//              width: 3.0,
-//            ),
-//          ),
-      )),
     );
-
-//    ret.add(_cameraTogglesRowWidget());
-
-//    ret.add(stop_recording_button());
-
-    return ret;
   }
+
+//  List<Widget> generate_widgets_init() {
+//    List<Widget> ret = [
+//
+////    ListTile(
+////      title: Text(
+////        "Cover camera with finger pad.",
+////        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+////      ),
+////      subtitle: Text(""),
+////    ),
+//
+////    Expanded(
+////      child: InkWell(
+////        child: Container(
+////          child: Padding(
+////            padding: const EdgeInsets.all(1.0),
+////            child: Center(
+////              child: _cameraPreviewWidget(),
+////            ),
+////          ),
+////          decoration: BoxDecoration(
+////            color: Colors.black,
+////            border: Border.all(
+////              color: Colors.grey,
+////              width: 3.0,
+////            ),
+////          ),
+////        ),
+////        onTap: controller != null && controller.value.isInitialized == false ? () {
+////          onNewCameraSelected(UserDataContainer.of(context).data.cameras[0]);
+////        } : null,
+////      ),
+////    ),
+//
+//
+//
+//    ];
+//
+////    ret.add(_cameraTogglesRowWidget());
+//
+////    ret.add(Row(
+////      children: <Widget>[
+////        record_button(),
+////        init_process == false
+////            ? Container()
+////            : Text(_loading_recording_process
+////            ? "Get ready. Recording will start in " +
+////            _time_left.inSeconds.toString() +
+////            "s"
+////            : "Recording done in " +
+////            _time_left.inSeconds.toString() +
+////            "s")
+////      ],
+////    )
+////    );
+//
+////    ret.add(start_recording_button());
+//
+//    return ret;
+//  }
+
+//  List<Widget> generate_widgets_getting_ready() {
+//    List<Widget> ret = List<Widget>();
+//
+//
+//
+////    ret.add(Expanded(
+////      child: Container(
+////        child: Padding(
+////          padding: const EdgeInsets.all(1.0),
+////          child: Center(
+////            child: _cameraPreviewWidget(),
+////          ),
+////        ),
+//////        decoration: BoxDecoration(
+//////          color: Colors.black,
+//////          border: Border.all(
+//////            color: controller != null && controller.value.isRecordingVideo
+//////                ? Colors.redAccent
+//////                : Colors.grey,
+//////            width: 3.0,
+//////          ),
+//////        ),
+////      ),
+////    ));
+//
+////    ret.add(_cameraTogglesRowWidget());
+//
+////    ret.add(stop_recording_button());
+//    ret.add(ListTile(
+//      title: Text("Cover camera with finger pad."),
+//      subtitle: Text("Countdown: " + _time_left.inSeconds.toString() + "s",
+//          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+//    ));
+//
+//    return ret;
+//  }
+
+//  List<Widget> generate_widgets_recording() {
+//    List<Widget> ret = List<Widget>();
+//
+//
+//
+////    ret.add(
+////      Expanded(
+////          child: Container(
+////        child: Padding(
+////          padding: const EdgeInsets.all(1.0),
+////          child: Center(
+////            child: _cameraPreviewWidget(),
+////          ),
+////        ),
+//////          decoration: BoxDecoration(
+//////            color: Colors.black,
+//////            border: Border.all(
+//////              color: controller != null && controller.value.isRecordingVideo
+//////                  ? Colors.redAccent
+//////                  : Colors.grey,
+//////              width: 3.0,
+//////            ),
+//////          ),
+////      )),
+////    );
+//
+//    ret.add(ListTile(
+//      title: Text("Stay still for: " + _time_left.inSeconds.toString() + "s",
+//          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+//      subtitle: Text(""),
+//    ));
+//
+////    ret.add(_cameraTogglesRowWidget());
+//
+////    ret.add(stop_recording_button());
+//
+//    return ret;
+//  }
 
   Widget start_recording_button() {
     return Padding(
@@ -309,6 +475,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               ),
               color: Theme.of(context).accentColor,
               onPressed: () {
+//                expandController.forward();
                 _loading_recording_process = true;
                 _time_left = Duration(seconds: time_before_recording_in_sec);
                 setState(() {
@@ -369,6 +536,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver {
               onPressed: () {
                 print("stop to record");
                 setState(() {
+//                  expandController.reverse();
                   _loading_recording_process = false;
                   controller.flash(false);
                   init_process = false;
