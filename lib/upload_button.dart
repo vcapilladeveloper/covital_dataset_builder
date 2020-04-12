@@ -275,8 +275,8 @@ class _UploadButtonState extends State<UploadButton> {
 
     upload_api.InlineObject inline_object = upload_api.InlineObject();
 
-    inline_object.source_ = "community";
-//    inline_object.source_ = "clinical";
+//    inline_object.source_ = "community";
+    inline_object.source_ = "clinical";
 
     widget.survey.date = DateTime.now();
 
