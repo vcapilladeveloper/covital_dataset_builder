@@ -100,6 +100,9 @@ class SurveyDataExport{
   String phoneBrand;
   String phoneModel;
 
+
+  DateTime date;
+
   Map<String, dynamic> _deviceData;
 
   static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
@@ -229,6 +232,8 @@ class SurveyDataExport{
 
     _user_file = null;
     _user_file_path = null;
+
+    date = null;
 
     sex = Sex.undefined;
 //    ethnicity = Ethnicity.undefinied;

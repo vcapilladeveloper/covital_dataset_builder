@@ -29,6 +29,7 @@ class FileToSend {
       filename: file_name_with_extension,
       savedDir: file_path,
       fieldname: "file",
+
     );
     print("Sending the data: " +
         fileItem.filename +
@@ -273,13 +274,19 @@ class _UploadButtonState extends State<UploadButton> {
 //    String video_path_in_s3 = path_lib.join(folder, video_name);
 
     upload_api.InlineObject inline_object = upload_api.InlineObject();
+
+    inline_object.source_ = "community";
+//    inline_object.source_ = "clinical";
+
+    widget.survey.date = DateTime.now();
+
     List<FileToSend> files_to_send = List<FileToSend>();
 
     FileToSend f_video = FileToSend(
         file_name_with_extension: video_name_extension,
         file_path: video_path,
         is_video: true);
-    f_video.file.name = "video";
+    f_video.file.name = widget.survey.date.toString();
     f_video.file.extension_ = extension;
 
     inline_object.files.add(f_video.file);
@@ -303,6 +310,10 @@ class _UploadButtonState extends State<UploadButton> {
     print(response.body);
     var response_map = jsonDecode(response.body);
     widget.survey.id = response_map['surveyId'];
+
+    //Write user data to file
+    await widget.survey.writeUserData();
+
 
     for (var el in response_map['signedRequests']) {
       for (var el_file in files_to_send) {

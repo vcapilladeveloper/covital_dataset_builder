@@ -44,7 +44,9 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
     ..health =
         _$enumDecodeNullable(_$RespiratorySymptomsEnumMap, json['health'])
     ..phoneBrand = json['phoneBrand'] as String
-    ..phoneModel = json['phoneModel'] as String;
+    ..phoneModel = json['phoneModel'] as String
+    ..date =
+        json['date'] == null ? null : DateTime.parse(json['date'] as String);
 }
 
 Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
@@ -74,6 +76,7 @@ Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
       'health': _$RespiratorySymptomsEnumMap[instance.health],
       'phoneBrand': instance.phoneBrand,
       'phoneModel': instance.phoneModel,
+      'date': instance.date?.toIso8601String(),
     };
 
 T _$enumDecode<T>(
@@ -115,6 +118,7 @@ const _$SexEnumMap = {
 };
 
 const _$RespiratorySymptomsEnumMap = {
+  RespiratorySymptoms.none: 'none',
   RespiratorySymptoms.mild: 'mild',
   RespiratorySymptoms.moderate: 'moderate',
   RespiratorySymptoms.severe: 'severe',
