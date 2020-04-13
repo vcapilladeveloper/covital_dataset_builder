@@ -219,19 +219,20 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
                     color: Theme.of(context).primaryTextTheme.title.color),
               ),
               color: Theme.of(context).accentColor,
-              onPressed: () {
-                if (survey.o2gt == null || survey.hrgt == null) {
-                  print("need gt data");
-                  Fluttertoast.showToast(
-                      msg:
-                          "please input data ground truth data for SpO2 and HR",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-                      backgroundColor: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (survey.o2gt > 100 ||
+              onPressed: (survey.o2gt == null || survey.hrgt == null) ? null : () {
+//                if (survey.o2gt == null || survey.hrgt == null) {
+//                  print("need gt data");
+//                  Fluttertoast.showToast(
+//                      msg:
+//                          "please input data ground truth data for SpO2 and HR",
+//                      toastLength: Toast.LENGTH_SHORT,
+//                      gravity: ToastGravity.CENTER,
+////                timeInSecForIosWeb: 1,
+//                      backgroundColor: Theme.of(context).accentColor,
+//                      textColor: Colors.white,
+//                      fontSize: 16.0);
+//                } else
+                  if (survey.o2gt > 100 ||
                     survey.o2gt < 0 ||
                     survey.hrgt < 0) {
                   print("need gt data");
