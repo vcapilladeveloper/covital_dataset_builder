@@ -64,7 +64,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
 //              ),
 //            )
 //          : null,
-      bottomNavigationBar: nextPageButton(),
+      bottomNavigationBar: SafeArea(child: nextPageButton()),
     );
   }
 

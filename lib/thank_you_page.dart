@@ -72,25 +72,27 @@ class _ThankYouPageState extends State<ThankYouPage> {
   }
 
   Widget nextPageButton(){
-    return Padding(
-        padding: EdgeInsets.only(left: 10, right: 10),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-                child: RaisedButton(
-                  elevation: 0,
-                  child: Text(
-                    "Start a new measurement",
-                    style: TextStyle(
-                        color: Theme.of(context).primaryTextTheme.title.color),
-                  ),
-                  color: Theme.of(context).accentColor,
-                  onPressed: () {
-                    survey.clear();
-                    Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
-                  },
-                ))
-          ],
-        ));
+    return SafeArea(
+      child: Padding(
+          padding: EdgeInsets.only(left: 10, right: 10),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                  child: RaisedButton(
+                    elevation: 0,
+                    child: Text(
+                      "Start a new measurement",
+                      style: TextStyle(
+                          color: Theme.of(context).primaryTextTheme.title.color),
+                    ),
+                    color: Theme.of(context).accentColor,
+                    onPressed: () {
+                      survey.clear();
+                      Navigator.of(context).pushNamedAndRemoveUntil("/home", (Route<dynamic> route) => false);
+                    },
+                  ))
+            ],
+          )),
+    );
   }
 }

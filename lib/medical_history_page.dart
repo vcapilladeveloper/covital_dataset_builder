@@ -85,7 +85,7 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
       ),
       body: respiratorySymptoms(),
 
-      bottomNavigationBar: nextPageButton(),
+      bottomNavigationBar: SafeArea(child: nextPageButton()),
 //      floatingActionButton: init_app
 //          ? FloatingActionButton(
 //              onPressed: onPressedSendButton,

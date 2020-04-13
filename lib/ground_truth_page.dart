@@ -125,7 +125,7 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
 //              ),
 //            )
 //          : null,
-      bottomNavigationBar: nextPageButton(),
+      bottomNavigationBar: SafeArea(child: nextPageButton()),
     );
   }
 

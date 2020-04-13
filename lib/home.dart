@@ -302,7 +302,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver, SingleTickerPr
         ),
       ),
       drawer: DrawerOnly(),
-      bottomNavigationBar: bottom_button,
+      bottomNavigationBar: SafeArea(child: bottom_button),
     );
   }
 

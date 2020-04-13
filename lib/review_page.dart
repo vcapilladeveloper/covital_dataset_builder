@@ -95,7 +95,7 @@ class _ReviewPageState extends State<ReviewPage> {
 //              ),
 //            )
 //          : null,
-      bottomNavigationBar: UploadButton(survey: survey, updateProgress: updateProgress, isUploading: uploadUpdate,),
+      bottomNavigationBar: SafeArea(child: UploadButton(survey: survey, updateProgress: updateProgress, isUploading: uploadUpdate,)),
     );
   }
 
