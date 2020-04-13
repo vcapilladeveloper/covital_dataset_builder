@@ -300,7 +300,7 @@ class _UploadButtonState extends State<UploadButton> {
             path_lib.basename(widget.survey.user_file.path),
         file_path: widget.survey.user_file_path,
         is_video: false);
-    f_user.file.name = "user";
+    f_user.file.name = "data";
     f_user.file.extension_ = "json";
     inline_object.files.add(f_user.file);
     files_to_send.add(f_user);
