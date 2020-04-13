@@ -216,7 +216,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.o2gt = double.parse(s);
+                          survey.spo2 = double.parse(s);
                         });
                       });
                     },
@@ -224,7 +224,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.o2gt = double.parse(s);
+                          survey.spo2 = double.parse(s);
                         });
                       });
                     },
@@ -242,7 +242,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.hrgt = double.parse(s);
+                          survey.hr = double.parse(s);
                         });
                       });
                     },
@@ -250,7 +250,7 @@ class _GroundTruthState extends State<GroundTruth> {
                       print("Submitted: " + s);
                       setState(() {
                         setState(() {
-                          survey.hrgt = double.parse(s);
+                          survey.hr = double.parse(s);
                         });
                       });
                     },
@@ -474,7 +474,7 @@ class _GroundTruthState extends State<GroundTruth> {
         widgets.add(
           SizedBox(width: 200, child: RadioListTile(
             value: health,
-            groupValue: survey.health,
+            groupValue: survey.respiratorySymptoms,
             title: Text(health
                 .toString()
                 .split(".")
@@ -483,11 +483,11 @@ class _GroundTruthState extends State<GroundTruth> {
 //          subtitle: Text(programming.developer),
             onChanged: (health_change) {
               setState(() {
-                survey.health = health_change;
+                survey.respiratorySymptoms = health_change;
               });
               print("Current ${health_change}");
             },
-            selected: survey.health == health,
+            selected: survey.respiratorySymptoms == health,
             activeColor: Colors.green,
           )),
         );

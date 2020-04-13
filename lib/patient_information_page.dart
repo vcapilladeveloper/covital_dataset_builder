@@ -717,7 +717,7 @@ class _PatientInformationPageState extends State<PatientInformationPage> {
                 child: RaisedButton(
                   elevation: 0,
               child: Text(
-                "Next: Patient History",
+                "Next: Medical History",
                 style: TextStyle(
                     color: Theme.of(context).primaryTextTheme.title.color),
               ),

@@ -107,13 +107,13 @@ class _HomeState extends State<Home> with WidgetsBindingObserver, SingleTickerPr
     String icon = 'assets/images/logo_dark.png';
 
 
-
+    double height = MediaQuery.of(context).size.height;
 
     List<Widget> column = [
 
       AnimatedContainer(
         width: 400,
-        height: init_process ? 470 : 270.0,
+        height: init_process ? height/1.5 : height / 2.6,
         duration: Duration(milliseconds: animation_duration_in_ms),
         child:InkWell(
           child: Container(
@@ -148,7 +148,7 @@ class _HomeState extends State<Home> with WidgetsBindingObserver, SingleTickerPr
         firstChild: Container(child:Column(children: <Widget>[
 
           Image.asset("assets/tutorial.png", height: 200,),
-          Center(child:Text("Completely cover the rear camera with your finger", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center,)),
+          Center(child:Text("Completely cover the rear camera and flash with your finger", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20), textAlign: TextAlign.center,)),
 
           SizedBox(height: 10),
 

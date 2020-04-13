@@ -34,15 +34,15 @@ SurveyDataExport _$SurveyDataExportFromJson(Map<String, dynamic> json) {
         (json['userAccelerometerTimestamps'] as List)
             ?.map((e) => e == null ? null : DateTime.parse(e as String))
             ?.toList()
-    ..o2gt = (json['o2gt'] as num)?.toDouble()
-    ..hrgt = (json['hrgt'] as num)?.toDouble()
+    ..spo2 = (json['spo2'] as num)?.toDouble()
+    ..hr = (json['hr'] as num)?.toDouble()
     ..age = json['age'] as int
     ..weight = (json['weight'] as num)?.toDouble()
     ..height = (json['height'] as num)?.toDouble()
     ..sex = _$enumDecodeNullable(_$SexEnumMap, json['sex'])
     ..skinColor = json['skinColor'] as int
-    ..health =
-        _$enumDecodeNullable(_$RespiratorySymptomsEnumMap, json['health'])
+    ..respiratorySymptoms = _$enumDecodeNullable(
+        _$RespiratorySymptomsEnumMap, json['respiratorySymptoms'])
     ..phoneBrand = json['phoneBrand'] as String
     ..phoneModel = json['phoneModel'] as String
     ..date =
@@ -66,14 +66,15 @@ Map<String, dynamic> _$SurveyDataExportToJson(SurveyDataExport instance) =>
       'userAccelerometerTimestamps': instance.userAccelerometerTimestamps
           ?.map((e) => e?.toIso8601String())
           ?.toList(),
-      'o2gt': instance.o2gt,
-      'hrgt': instance.hrgt,
+      'spo2': instance.spo2,
+      'hr': instance.hr,
       'age': instance.age,
       'weight': instance.weight,
       'height': instance.height,
       'sex': _$SexEnumMap[instance.sex],
       'skinColor': instance.skinColor,
-      'health': _$RespiratorySymptomsEnumMap[instance.health],
+      'respiratorySymptoms':
+          _$RespiratorySymptomsEnumMap[instance.respiratorySymptoms],
       'phoneBrand': instance.phoneBrand,
       'phoneModel': instance.phoneModel,
       'date': instance.date?.toIso8601String(),

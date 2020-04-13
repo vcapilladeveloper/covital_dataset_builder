@@ -219,21 +219,22 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
                     color: Theme.of(context).primaryTextTheme.title.color),
               ),
               color: Theme.of(context).accentColor,
-              onPressed: () {
-                if (survey.o2gt == null || survey.hrgt == null) {
-                  print("need gt data");
-                  Fluttertoast.showToast(
-                      msg:
-                          "please input data ground truth data for SpO2 and HR",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.CENTER,
-//                timeInSecForIosWeb: 1,
-                      backgroundColor: Theme.of(context).accentColor,
-                      textColor: Colors.white,
-                      fontSize: 16.0);
-                } else if (survey.o2gt > 100 ||
-                    survey.o2gt < 0 ||
-                    survey.hrgt < 0) {
+              onPressed: (survey.spo2 == null || survey.hr == null) ? null : () {
+//                if (survey.o2gt == null || survey.hrgt == null) {
+//                  print("need gt data");
+//                  Fluttertoast.showToast(
+//                      msg:
+//                          "please input data ground truth data for SpO2 and HR",
+//                      toastLength: Toast.LENGTH_SHORT,
+//                      gravity: ToastGravity.CENTER,
+////                timeInSecForIosWeb: 1,
+//                      backgroundColor: Theme.of(context).accentColor,
+//                      textColor: Colors.white,
+//                      fontSize: 16.0);
+//                } else
+                  if (survey.spo2 > 100 ||
+                    survey.spo2 < 0 ||
+                    survey.hr < 0) {
                   print("need gt data");
                   Fluttertoast.showToast(
                       msg:
@@ -264,12 +265,12 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Theme(
                   data: Theme.of(context).copyWith(
-                      hintColor: survey.o2gt == null
+                      hintColor: survey.spo2 == null
                           ? Theme.of(context).accentColor
                           : Theme.of(context).hintColor), // set color here
                   child: TextFormField(
                     initialValue:
-                        survey.o2gt != null ? survey.o2gt.toString() : "",
+                        survey.spo2 != null ? survey.spo2.toString() : "",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         filled: true,
@@ -285,9 +286,9 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
                       setState(() {
                         setState(() {
                           if (s.isNotEmpty) {
-                            survey.o2gt = double.parse(s);
+                            survey.spo2 = double.parse(s);
                           } else {
-                            survey.o2gt = null;
+                            survey.spo2 = null;
                           }
                         });
                       });
@@ -300,12 +301,12 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
               padding: EdgeInsets.only(left: 20, right: 20),
               child: Theme(
                   data: Theme.of(context).copyWith(
-                      hintColor: survey.hrgt == null
+                      hintColor: survey.hr == null
                           ? Theme.of(context).accentColor
                           : Theme.of(context).hintColor), // set color here
                   child: TextFormField(
                     initialValue:
-                        survey.hrgt != null ? survey.hrgt.toString() : "",
+                        survey.hr != null ? survey.hr.toString() : "",
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         filled: true,
@@ -320,9 +321,9 @@ class _GroundTruthPageState extends State<GroundTruthPage> {
                       setState(() {
                         setState(() {
                           if (s.isNotEmpty) {
-                            survey.hrgt = double.parse(s);
+                            survey.hr = double.parse(s);
                           } else {
-                            survey.hrgt = null;
+                            survey.hr = null;
                           }
                         });
                       });

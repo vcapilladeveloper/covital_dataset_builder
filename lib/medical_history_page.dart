@@ -192,17 +192,17 @@ class _MedicalHistoryPageState extends State<MedicalHistoryPage> {
               width: 200,
               child: RadioListTile(
                 value: health,
-                groupValue: survey.health,
+                groupValue: survey.respiratorySymptoms,
                 title: Text(text),
 //
 //          subtitle: Text(programming.developer),
                 onChanged: (health_change) {
                   setState(() {
-                    survey.health = health_change;
+                    survey.respiratorySymptoms = health_change;
                   });
                   print("Current ${health_change}");
                 },
-                selected: survey.health == health,
+                selected: survey.respiratorySymptoms == health,
                 activeColor: Colors.green,
               )),
         );
