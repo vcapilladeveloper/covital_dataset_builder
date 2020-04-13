@@ -153,7 +153,7 @@ class _ReviewPageState extends State<ReviewPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text("Spo2"),
-            Text(survey.o2gt.toString() + "%", style: TextStyle(fontWeight: FontWeight.bold),)
+            Text(survey.spo2.toString() + "%", style: TextStyle(fontWeight: FontWeight.bold),)
           ],
         ),
 
@@ -163,7 +163,7 @@ class _ReviewPageState extends State<ReviewPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text("Heart rate"),
-            Text(survey.hrgt.toString() + " BPM", style: TextStyle(fontWeight: FontWeight.bold),)
+            Text(survey.hr.toString() + " BPM", style: TextStyle(fontWeight: FontWeight.bold),)
           ],
         ),
 
@@ -286,7 +286,7 @@ class _ReviewPageState extends State<ReviewPage> {
               children: <Widget>[
 
                 Text("Respiratory Symptoms "),
-                Text(survey.health.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),)
+                Text(survey.respiratorySymptoms.toString().split(".").last, style: TextStyle(fontWeight: FontWeight.bold),)
               ],
             ),
 //                Expanded(child:Column(

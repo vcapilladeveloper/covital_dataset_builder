@@ -81,8 +81,8 @@ class SurveyDataExport{
   List<DateTime> gyroscopeTimestamps = List<DateTime>();
   List<DateTime> userAccelerometerTimestamps = List<DateTime>();
 
-  double o2gt;
-  double hrgt;
+  double spo2;
+  double hr;
 
   int age;
   double weight;
@@ -95,7 +95,7 @@ class SurveyDataExport{
 //  @deprecated
 //  Ethnicity ethnicity = Ethnicity.undefinied;
   int skinColor;
-  RespiratorySymptoms health = RespiratorySymptoms.undefined;
+  RespiratorySymptoms respiratorySymptoms = RespiratorySymptoms.undefined;
 
   String phoneBrand;
   String phoneModel;
@@ -223,8 +223,8 @@ class SurveyDataExport{
 
   void clear(){
     clearSensorData();
-    o2gt = null;
-    hrgt = null;
+    spo2 = null;
+    hr = null;
 
     age = null;
     weight = null;
@@ -237,7 +237,7 @@ class SurveyDataExport{
 
     sex = Sex.undefined;
 //    ethnicity = Ethnicity.undefinied;
-    health = RespiratorySymptoms.undefined;
+    respiratorySymptoms = RespiratorySymptoms.undefined;
     skinColor = null;
 
   }
